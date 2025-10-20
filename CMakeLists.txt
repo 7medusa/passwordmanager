@@ -3,6 +3,13 @@ project(passwordmanager)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(passwordmanager main.cpp
+add_executable(passwordmanager
+        main.cpp
         outputs.h
-        outputs.cpp)
+        outputs.cpp
+        decrypt.h
+        decrypt.cpp
+        database.h
+        database.cpp
+        encrypt.h
+        encrypt.cpp)

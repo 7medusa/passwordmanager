@@ -2,7 +2,7 @@
 #include <iostream>
 
 int decision() {
-    cout << "1 for add login\n2to delete login\n3 to list logins\n4 for exit" << endl;
+    cout << "1 for add login\n2 to edit login\n3 to delete login\n4 to list logins\n5 for exit" << endl;
     string s; cin >> s;
     if(s == "1") {
         return 1;
@@ -15,6 +15,9 @@ int decision() {
     }
     else if(s == "4") {
         return 4;
+    }
+    else if(s == "5") {
+        return 5;
     }
     else {
         cout << "input error" << endl;

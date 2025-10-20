@@ -1,0 +1,8 @@
+//
+// Created by medusa on 20.10.25.
+//
+
+#ifndef PASSWORDMANAGER_DECRYPT_H
+#define PASSWORDMANAGER_DECRYPT_H
+
+#endif //PASSWORDMANAGER_DECRYPT_H
