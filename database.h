@@ -1,16 +1,26 @@
 #pragma once
 #include <string>
+#include <fstream>
 
 using namespace std;
+
+struct Login {
+    int id;
+    string website;
+    string username;
+    string password;
+};
 
 class Csv {
 public:
     Csv(string fileName);
     ~Csv();
     void listData();
+    void readData(string website, string maserPassword);
     void writeData(bool edit);
-    void readData();
     void deleteData();
 private:
-    const string filename;
+    string filename;
+    ofstream fileOutput;
+    ifstream fileInput;
 };

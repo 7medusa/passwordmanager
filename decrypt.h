@@ -1,8 +1,12 @@
-//
-// Created by medusa on 20.10.25.
-//
+#pragma once
+#include <string>
 
-#ifndef PASSWORDMANAGER_DECRYPT_H
-#define PASSWORDMANAGER_DECRYPT_H
+using namespace std;
 
-#endif //PASSWORDMANAGER_DECRYPT_H
+//entschlüsseln
+
+string sha256(const string &input);
+
+string decrypt(bool masterPassword, string encryptedData);
+
+bool decryptMasterPassword(string masterPassword);

@@ -1,0 +1,7 @@
+masterpassword zu hash machen und mit gespeicherten masterpasswordhash vergleichen
+
+wenn passwort stimmt daraus key erstellen um damit das loginpasswort zu entschlüsseln
+
+salts nutzen um jedes loginpasswort stärker zu schützen
+
+sha256 hash value of masterpassword
