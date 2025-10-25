@@ -13,3 +13,6 @@ add_executable(passwordmanager
         database.cpp
         encrypt.h
         encrypt.cpp)
+
+find_package(OpenSSL REQUIRED)
+target_link_libraries(passwordmanager PRIVATE OpenSSL::Crypto)
