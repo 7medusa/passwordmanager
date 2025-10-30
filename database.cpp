@@ -4,7 +4,7 @@
 #include <iomanip>
 #include "decrypt.h"
 
-Csv::Csv(string filename) {
+Csv::Csv(const char* filename) {
     this->filename = filename;
 }
 

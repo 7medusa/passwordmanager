@@ -1,15 +1,29 @@
+#include <cstring>
 #include <iostream>
 #include "outputs.h"
 #include "decrypt.h"
 #include "encrypt.h"
 #include "database.h"
+#include <chrono>
+#include <openssl/sha.h>
 
-#define data "/home/medusa/projekte/passwordmanager/data.csv"
-
+const char* dataCSV = "/home/medusa/projekte/passwordmanager/data.csv";
 using namespace std;
 
+void keyFromMasterPassword(const char* password, uint8_t* key) {
+    uint8_t hash[32];
+    SHA256((const uint8_t*)password, strlen(password), hash);
+    memcpy(key, hash, 32);//32 bytes for AES-256
+}
+
+void generate_iv_from_time(uint8_t* iv) {
+    memset(iv, 0, 16);
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    memcpy(iv + 8, &ms, sizeof(ms));
+}
+
 int function() {
-    Csv database(data);
+    Csv database(dataCSV);
     while(true) {
         string website;
         string masterPassword;
@@ -44,12 +58,16 @@ int function() {
 }
 
 int main() {
-    Csv database(data);
-    if(decryptMasterPassword("password")) {
-        cout << "master password correct" << endl;
+    string masterPasswordString;
+    cout << "type your Masterpassword:" << endl;
+    //getline(cin, masterPasswordString);
+    masterPasswordString = "password";
+    if(decryptMasterPassword(masterPasswordString)) {
+        cout << "MasterPassword correct" << endl;
     }
     else {
-        cout << "master password wrong" << endl;
+        cerr << "Masterpassword wrong" << endl;
+        return -1;
     }
     return 0;
 }

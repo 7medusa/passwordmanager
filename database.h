@@ -13,7 +13,7 @@ struct Login {
 
 class Csv {
 public:
-    Csv(string fileName);
+    Csv(const char* fileName);
     ~Csv();
     void listData();
     void readData(string website, string maserPassword);

@@ -12,7 +12,9 @@ add_executable(passwordmanager
         database.h
         database.cpp
         encrypt.h
-        encrypt.cpp)
+        encrypt.cpp
+        libs/tiny-AES-c/aes.c)
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(passwordmanager PRIVATE OpenSSL::Crypto)
+target_include_directories(passwordmanager PRIVATE /home/medusa/projekte/studium/libs/tiny-AES-c/aes.hpp)

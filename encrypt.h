@@ -1,8 +1,5 @@
-//
-// Created by medusa on 20.10.25.
-//
+#pragma once
+#include <string>
+#include "libs/tiny-AES-c/aes.hpp"
 
-#ifndef PASSWORDMANAGER_ENCRYPT_H
-#define PASSWORDMANAGER_ENCRYPT_H
-
-#endif //PASSWORDMANAGER_ENCRYPT_H
+using namespace std;

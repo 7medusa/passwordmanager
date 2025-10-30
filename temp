@@ -1,7 +1,30 @@
-masterpassword zu hash machen und mit gespeicherten masterpasswordhash vergleichen
+    AES_ctx ctx{};
+    uint8_t key[16];
+    uint8_t iv[16];
+    char* masterPassword = new char[masterPasswordString.length() + 1];
+    strcpy(masterPassword, masterPasswordString.c_str());
+    keyFromMasterPassword(masterPassword, key);
+    delete[] masterPassword;
+    generate_iv_from_time(iv);
+    AES_init_ctx_iv(&ctx, key, iv);
 
-wenn passwort stimmt daraus key erstellen um damit das loginpasswort zu entschlüsseln
+    char* data = "test";
+    size_t length = strlen(data);
+    size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
+    uint8_t buffer[64] = {0};
+    memcpy(buffer, data, length);
 
-salts nutzen um jedes loginpasswort stärker zu schützen
+    for (size_t i = 0; i < length; ++i)
+        std::cout << (char)buffer[i];
+    cout << endl;
 
-sha256 hash value of masterpassword
+    AES_CBC_encrypt_buffer(&ctx, buffer, bufferLength);
+    for (size_t i = 0; i < bufferLength; ++i)
+        std::cout << std::hex << (int)buffer[i];
+    cout << endl;
+
+    generate_iv_from_time(iv);
+    AES_ctx_set_iv(&ctx, iv);
+    AES_CBC_decrypt_buffer(&ctx, buffer, bufferLength);
+    for (size_t i = 0; i < length; ++i)
+        std::cout << (char)buffer[i];
