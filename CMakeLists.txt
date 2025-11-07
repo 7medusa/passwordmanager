@@ -13,7 +13,9 @@ add_executable(passwordmanager
         database.cpp
         encrypt.h
         encrypt.cpp
-        libs/tiny-AES-c/aes.c)
+        libs/tiny-AES-c/aes.c
+        init.cpp
+        init.h)
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(passwordmanager PRIVATE OpenSSL::Crypto)
