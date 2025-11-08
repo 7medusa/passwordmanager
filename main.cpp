@@ -7,6 +7,7 @@
 #include <chrono>
 #include <openssl/sha.h>
 #include "init.h"
+#include "libs/tiny-AES-c/aes.hpp"
 
 const char* dataCSV = "/home/medusa/projekte/passwordmanager/data.csv";
 using namespace std;
@@ -56,7 +57,7 @@ int main() {
         return -1;
     }
 
-    AESCtx ctx{};
+    AES_ctx ctx{};
     uint8_t key[16];
     uint8_t iv[16];
     generateIvFromTime(iv);

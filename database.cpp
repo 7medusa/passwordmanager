@@ -39,7 +39,7 @@ void Csv::listData() {//list all login entrys
     fileInput.close();
 }
 
-void Csv::readData(string website, AESCtx ctx) {
+void Csv::readData(string website, AES_ctx ctx) {
     fileInput.open(filename);
     while(fileInput.good()) {
         const int labelWidth = 10;

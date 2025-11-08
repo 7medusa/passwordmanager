@@ -26,7 +26,7 @@ bool decryptMasterPassword(string masterPassword) {
     return false;
 }
 
-string decrypt(string encryptedData, AESCtx ctx, uint8_t iv[16]) {
+string decrypt(string encryptedData, AES_ctx ctx, uint8_t iv[16]) {
     string output = "";
     uint8_t buffer[32] = {};
     size_t bufferLength = 32;

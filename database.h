@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <fstream>
+#include "libs/tiny-AES-c/aes.hpp"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ public:
     Csv(const char* fileName);
     ~Csv();
     void listData();
-    void readData(string website, AESCtx ctx);
+    void readData(string website, AES_ctx ctx);
     void writeData(bool edit);
     void deleteData();
 private:

@@ -6,4 +6,4 @@ using namespace std;
 
 bool decryptMasterPassword(string masterPassword);
 
-string decrypt(string encryptedData, AESCtx ctx, uint8_t iv[16]);
+string decrypt(string encryptedData, AES_ctx ctx, uint8_t iv[16]);

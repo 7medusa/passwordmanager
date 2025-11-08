@@ -23,7 +23,7 @@ string sha256(const string &input) {
     return result.str();
 }
 
-string encrypt(char* data, AESCtx ctx) {
+string encrypt(char* data, AES_ctx ctx) {
     uint8_t iv[16];
     size_t length = strlen(data);
     size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
