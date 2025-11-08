@@ -18,7 +18,7 @@ string sha256(const string &input) {
 
     std::ostringstream result;
     for (unsigned int i = 0; i < length; ++i) {
-        result << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+        result << hex << setw(2) << setfill('0') << (int)hash[i];
     }
     return result.str();
 }
@@ -27,7 +27,7 @@ string encrypt(char* data, AESCtx ctx) {
     uint8_t iv[16];
     size_t length = strlen(data);
     size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
-    uint8_t buffer[64] = {0};
+    uint8_t buffer[32] = {0};
     memcpy(buffer, data, length);
 
     generateIvFromTime(iv);
@@ -39,5 +39,5 @@ string encrypt(char* data, AESCtx ctx) {
         outputStream << hex << (int)buffer[i];
     }
     string output = outputStream.str();
-    return output;
+    return (char*)buffer;
 }

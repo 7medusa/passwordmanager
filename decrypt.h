@@ -4,10 +4,6 @@
 
 using namespace std;
 
-//entschlüsseln
-
-string sha256(const string &input);
-
-string decrypt(bool masterPassword, string encryptedData);
-
 bool decryptMasterPassword(string masterPassword);
+
+string decrypt(string encryptedData, AESCtx ctx, uint8_t iv[16]);

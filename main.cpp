@@ -6,6 +6,7 @@
 #include "database.h"
 #include <chrono>
 #include <openssl/sha.h>
+#include "init.h"
 
 const char* dataCSV = "/home/medusa/projekte/passwordmanager/data.csv";
 using namespace std;
@@ -14,12 +15,6 @@ void keyFromMasterPassword(const char* password, uint8_t* key) {
     uint8_t hash[32];
     SHA256((const uint8_t*)password, strlen(password), hash);
     memcpy(key, hash, 32);//32 bytes for AES-256
-}
-
-void generate_iv_from_time(uint8_t* iv) {
-    memset(iv, 0, 16);
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    memcpy(iv + 8, &ms, sizeof(ms));
 }
 
 int function() {
@@ -31,23 +26,14 @@ int function() {
             case -1://false input
                 break;
             case 1://add login
-                database.writeData(false);
                 break;
             case 2://edit login
-                database.writeData(true);
                 break;
             case 3://delete login
-                database.deleteData();
                 break;
             case 4://list all logins, but the passwords as *
-                database.listData();
                 break;
-            case 5:
-                cout << "Website" << endl;
-                getline(cin, website);
-                cout << "Masterpassword" << endl;
-                getline(cin, masterPassword);
-                database.readData(website, masterPassword);
+            case 5://show login
                 break;
             case 6://exit
                 return 0;
@@ -69,5 +55,30 @@ int main() {
         cerr << "Masterpassword wrong" << endl;
         return -1;
     }
+
+    AESCtx ctx{};
+    uint8_t key[16];
+    uint8_t iv[16];
+    generateIvFromTime(iv);
+    char* masterPassword = new char[masterPasswordString.length() + 1];
+    strcpy(masterPassword, masterPasswordString.c_str());
+    keyFromMasterPassword(masterPassword, key);
+    delete[] masterPassword;
+    AES_init_ctx_iv(&ctx, key, iv);
+
+    //test
+    char* testData = "test data";
+
+    string encryptedData = encrypt(testData, ctx);
+    cout << "encrypted Data: ";
+    for(size_t i = 0; i < encryptedData.size(); i++) {
+        cout << hex << setw(2) << setfill('0') << (int)(uint8_t)encryptedData[i];
+    }
+    cout << endl;
+
+    generateIvFromTime(iv);
+    cout << "decrypted Data: " << decrypt(encryptedData, ctx, iv) << endl;
+    //test
+
     return 0;
 }
