@@ -70,6 +70,11 @@ void Csv::readData(string website, AES_ctx ctx) {
     fileInput.close();
 }
 
-void Csv::writeData(bool edit) {}
+void Csv::writeData(bool edit) {
+    if(edit) {}
+    else {}
+}
 
-void Csv::deleteData() {}
+void Csv::deleteData(string website) {}
+
+//beim schreiben muss in die verschlüssel funktion davor die iv übergeben werden, das sie in der database class berechnet wird und in die csv geschrieben werden kann

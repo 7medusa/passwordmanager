@@ -6,4 +6,4 @@ using namespace std;
 
 string sha256(const string &input);
 
-string encrypt(char* data, AES_ctx ctx);
+string encrypt(char* data, AES_ctx ctx, uint8_t iv[16]);

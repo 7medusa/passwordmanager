@@ -8,6 +8,8 @@
 #include "encrypt.h"
 #include "init.h"
 
+//entschlüsseln
+
 bool decryptMasterPassword(string masterPassword) {
     ifstream masterPasswordFile("../masterPasswordHashValue");
     string hashValue;

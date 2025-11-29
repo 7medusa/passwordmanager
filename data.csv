@@ -1,2 +1,1 @@
-1,google,user1,1234
-2,wikipedia,user2,4321
+id,website,username,password,iv

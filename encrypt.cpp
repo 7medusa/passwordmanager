@@ -5,6 +5,8 @@
 #include <openssl/evp.h>
 #include "init.h"
 
+//verschlüsseln
+
 string sha256(const string &input) {
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
     const EVP_MD *md = EVP_sha256();
@@ -23,14 +25,12 @@ string sha256(const string &input) {
     return result.str();
 }
 
-string encrypt(char* data, AES_ctx ctx) {
-    uint8_t iv[16];
+string encrypt(char* data, AES_ctx ctx, uint8_t iv[16]) {
     size_t length = strlen(data);
     size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
     uint8_t buffer[32] = {0};
     memcpy(buffer, data, length);
 
-    generateIvFromTime(iv);
     AES_ctx_set_iv(&ctx, iv);
     AES_CBC_encrypt_buffer(&ctx, buffer, bufferLength);
 
