@@ -13,7 +13,7 @@ Csv::~Csv() {
     fileOutput.close();
 }
 
-void Csv::listData() {//list all login entrys
+void Csv::listData() {
     fileInput.open(filename);
     const int labelWidth = 10;
     while(fileInput.good()) {
@@ -28,12 +28,11 @@ void Csv::listData() {//list all login entrys
             break;
         }
         Login login{stoi(column1), column2, column3, column4};
-        string censordPassword = "********";
         cout << "----------------------------------\n";
-        cout << left << setw(labelWidth) << "ID:" << login.id << '\n';//debug
+        cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
         cout << left << setw(labelWidth) << "Website:" << login.website << '\n';
         cout << left << setw(labelWidth) << "Username:" << login.username << '\n';
-        cout << left << setw(labelWidth) << "Password:" << censordPassword << '\n';
+        cout << left << setw(labelWidth) << "Password:" << "********" << '\n';
     }
     cout << "----------------------------------\n";
     fileInput.close();
@@ -54,7 +53,7 @@ void Csv::readData(string website, AES_ctx ctx) {
         if(column2 == website) {
             Login login{stoi(column1), column2, column3, column4, column5};
             cout << "----------------------------------\n";
-            cout << left << setw(labelWidth) << "ID:" << login.id << '\n';//debug
+            cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
             cout << left << setw(labelWidth) << "Website:" << login.website << '\n';
             cout << left << setw(labelWidth) << "Username:" << login.username << '\n';
             cout << left << setw(labelWidth) << "Password:" << decrypt(login.password, ctx, (uint8_t*)login.iv.data()) << '\n';
@@ -65,7 +64,7 @@ void Csv::readData(string website, AES_ctx ctx) {
         }
     }
     cout << "----------------------------------\n";
-    cout << "No login found for website " << website << '\n';
+    cout << "No login found for website: " << website << '\n';
     cout << "----------------------------------\n";
     fileInput.close();
 }
