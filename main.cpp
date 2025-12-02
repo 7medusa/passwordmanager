@@ -85,26 +85,5 @@ int main() {
 
     function(ctx);
 
-    //test
-    char* testData = "test data";
-    generateIvFromTime(iv);
-    string encryptedData = encrypt(testData, ctx, iv);
-
-    //printet die verschlüsselten daten
-    cout << "encrypted Data: ";
-    for(size_t i = 0; i < encryptedData.size(); i++) {
-        cout << hex << setw(2) << setfill('0') << (int)(uint8_t)encryptedData[i];
-    }
-    cout << endl;
-    //cout << endl << "iv:" << iv << endl;;
-
-    //cout << "waiting for 3 seconds" << endl;
-    //this_thread::sleep_for(chrono::seconds(5));
-
-    generateIvFromTime(iv);
-    cout << "decrypted Data: " << decrypt(encryptedData, ctx, iv) << endl;
-    //cout << "iv: " << iv << endl;
-    //test
-
     return 0;
 }

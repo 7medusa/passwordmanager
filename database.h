@@ -21,7 +21,7 @@ public:
     ~Csv();
     void listData();
     void readData(string website, AES_ctx ctx);
-    void writeData(bool edit);
+    void writeData(bool edit, int change, AES_ctx ctx, string website, string changeValue);
     void deleteData(string website);
 private:
     string filename;
