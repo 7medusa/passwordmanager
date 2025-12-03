@@ -24,7 +24,7 @@ void keyFromMasterPassword(const char* password, uint8_t* key) {
 void function(AES_ctx ctx) {
     string input;
     int decision = -1;
-    cout << "1 to add login, 2 to edit login, 3 to delete login, 4 to list all logins, 5 to show specific login, 6 to exit" << endl;
+    cout << "1 to add login, 2 to edit login, 3 to delete login, 4 to list all logins, 5 to show specific login, 6 to exit:" << endl;
     getline(cin, input);
     try {decision = stoi(input);}
     catch(invalid_argument& e) {cout << "input was not an int" << endl;}
@@ -35,17 +35,40 @@ void function(AES_ctx ctx) {
         switch(decision) {
             case 1://add login
                 break;
-            case 2://edit login
+            case 2: {//edit login
+                string website;
+                string changeString;
+                cout << "enter the website to edit:" << endl;
+                getline(cin, website);
+                cout << "attribute to change\n1 for website name, 2 for username, 3 for password" << endl;
+                getline(cin, changeString);
+                try {
+                    int change = stoi(changeString);
+                    string changeValue;
+                    cout << "change value:" << endl;
+                    getline(cin, changeValue);
+                    csv.editData(change, ctx, website, changeValue);
+                }
+                catch(invalid_argument& e) {cout << "input was not an int" << endl;}
                 break;
-            case 3://delete login
+            }
+            case 3: {//delete login
+                string website;
+                string agreement;
+                cout << "website to delete:" << endl;
+                getline(cin, website);
+                cout << "you sure? [y/n]" << endl;
+                getline(cin, agreement);
+                if(agreement == "y" || agreement == "Y") {csv.deleteData(website);}
+                else {cout << "aborted" << endl;}
                 break;
+            }
             case 4://list all logins
                 csv.listData();
                 break;
-            case 5: {
-                //show specific login
+            case 5: {//show specific login
                 string website;
-                cout << "Website to show:" << endl;
+                cout << "website to show:" << endl;
                 getline(cin, website);
                 csv.readData(website, ctx);
                 break;
@@ -63,7 +86,7 @@ void function(AES_ctx ctx) {
 int main() {
     string masterPasswordString;
     cout << "type your Masterpassword:" << endl;
-    //getline(cin, masterPasswordString);
+    getline(cin, masterPasswordString);
     masterPasswordString = "password";
     if(decryptMasterPassword(masterPasswordString)) {
         cout << "MasterPassword correct" << endl;
@@ -74,7 +97,7 @@ int main() {
     }
 
     AES_ctx ctx{};
-    uint8_t key[16];
+    uint8_t key[32];
     uint8_t iv[16];
     generateIvFromTime(iv);
     char* masterPassword = new char[masterPasswordString.length() + 1];
