@@ -23,7 +23,7 @@ public:
     void readData(string* website, AES_ctx ctx);
     void writeData(AES_ctx ctx, string* website, string* username, string password);
     void editData(int change, AES_ctx ctx, string* website, string changeValue);
-    void deleteData(string website);
+    void deleteData(string* website);
 private:
     string filename;
     ofstream fileOutput;

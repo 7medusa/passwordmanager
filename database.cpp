@@ -144,7 +144,7 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
     }
 }
 
-void Csv::deleteData(string website) {
+void Csv::deleteData(string* website) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     while(fileInput.good()) {
@@ -156,7 +156,7 @@ void Csv::deleteData(string website) {
         getline(fileInput, column3, ',');
         getline(fileInput, column4, ',');
         getline(fileInput, column5, ',');
-        if(column2 == website) {
+        if(column2 == *website) {
             for(int i = 0; i < 6; i++) {
                 doc.SetCell(column1, i, "");
             }

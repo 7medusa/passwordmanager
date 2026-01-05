@@ -3,7 +3,6 @@
 #include "decrypt.h"
 #include "encrypt.h"
 #include "database.h"
-#include <chrono>
 #include <openssl/sha.h>
 #include "init.h"
 #include "libs/tiny-AES-c/aes.hpp"
@@ -11,7 +10,46 @@
 using namespace std;
 
 const char* dataCSV = "/home/medusa/projekte/passwordmanager/data.csv";
+const string masterpasswordPath = "../masterPasswordHashValue";
 Csv csv(dataCSV);
+
+bool createMasterpassword() {
+    fstream masterpasswordFile(masterpasswordPath);
+    if(!masterpasswordFile.is_open()) {
+        masterpasswordFile.close();
+        string firstMasterpassword;
+        string secondMasterpassword;
+        cout << "set your masterpassword" << endl;
+        getline(cin, firstMasterpassword);
+        cout << "repeat your masterpassword" << endl;
+        getline(cin, secondMasterpassword);
+        if(firstMasterpassword == secondMasterpassword) {
+            masterpasswordFile << sha256(firstMasterpassword);
+            masterpasswordFile.close();
+            return true;
+        }
+        else {cout << "password do not match" << endl;return false;}
+    }
+    else {
+        string currentHashValue;
+        getline(masterpasswordFile, currentHashValue);
+        if(currentHashValue.empty()) {
+            string firstMasterpassword;
+            string secondMasterpassword;
+            cout << "set your masterpassword" << endl;
+            getline(cin, firstMasterpassword);
+            cout << "repeat your masterpassword" << endl;
+            getline(cin, secondMasterpassword);
+            if(firstMasterpassword == secondMasterpassword) {
+                masterpasswordFile << sha256(firstMasterpassword);
+                masterpasswordFile.close();
+                return true;
+            }
+            else {cout << "password do not match" << endl;return false;}
+        }
+        else {return true;}
+    }
+}
 
 void keyFromMasterPassword(const char* password, uint8_t* key) {
     uint8_t hash[32];
@@ -67,7 +105,7 @@ void function(AES_ctx ctx) {
                 getline(cin, website);
                 cout << "you sure? [y/n]" << endl;
                 getline(cin, agreement);
-                if(agreement == "y" || agreement == "Y") {csv.deleteData(website);}
+                if(agreement == "y" || agreement == "Y") {csv.deleteData(&website);}
                 else {cout << "aborted" << endl;}
                 break;
             }
@@ -107,10 +145,18 @@ void function(AES_ctx ctx) {
 }
 
 int main() {
+    //check if there is a masterpassword
+    bool loop = true;
+    while(loop) {
+        if(createMasterpassword()) {
+            loop = false;
+        }
+    }
+
     string masterPasswordString;
     cout << "type your Masterpassword:" << endl;
     getline(cin, masterPasswordString);
-    if(decryptMasterPassword(masterPasswordString)) {
+    if(decryptMasterPassword(&masterPasswordString, &masterpasswordPath)) {
         cout << "MasterPassword correct" << endl;
     }
     else {
@@ -132,12 +178,3 @@ int main() {
 
     return 0;
 }
-
-//for later:
-/*
-if(masterPasswordFile.is_open()) {
-        getline(masterPasswordFile, hashValue);
-    }
-*/
-//to do list:
-//set masterpassword for first time

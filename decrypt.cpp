@@ -7,8 +7,8 @@
 #include <cstring>
 #include "encrypt.h"
 
-bool decryptMasterPassword(string masterPassword) {
-    ifstream masterPasswordFile("../masterPasswordHashValue");
+bool decryptMasterPassword(const string* masterPassword, const string* masterpasswordPath) {
+    fstream masterPasswordFile(*masterpasswordPath);
     string hashValue;
     if(masterPasswordFile.is_open()) {
         getline(masterPasswordFile, hashValue);
@@ -18,7 +18,7 @@ bool decryptMasterPassword(string masterPassword) {
         return false;
     }
     masterPasswordFile.close();
-    string masterPasswordInputHashValue = sha256(masterPassword);
+    string masterPasswordInputHashValue = sha256(*masterPassword);
     if(masterPasswordInputHashValue == hashValue) {
         return true;
     }
