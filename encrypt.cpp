@@ -3,9 +3,6 @@
 #include <iostream>
 #include <chrono>
 #include <openssl/evp.h>
-#include "init.h"
-
-//verschlüsseln
 
 string sha256(const string &input) {
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
@@ -25,9 +22,9 @@ string sha256(const string &input) {
     return result.str();
 }
 
-string encrypt(char* data, AES_ctx ctx, uint8_t iv[16]) {
-    size_t length = strlen(data);
-    size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
+string encrypt(const char* data, AES_ctx ctx, uint8_t iv[16]) {
+    const size_t length = strlen(data);
+    const size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
     uint8_t buffer[32] = {0};
     memcpy(buffer, data, length);
 

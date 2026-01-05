@@ -19,8 +19,8 @@ Csv::~Csv() {
 
 void Csv::listData() {
     fileInput.open(filename);
-    const int labelWidth = 10;
     while(fileInput.good()) {
+        constexpr int labelWidth = 10;
         string line;
         string column1, column2, column3, column4;
         istringstream ss(line);
@@ -28,7 +28,7 @@ void Csv::listData() {
         getline(fileInput, column2, ',');
         getline(fileInput, column3, ',');
         getline(fileInput, column4, ',');
-        if(column2.empty()) {
+        if(column2.empty() || column2 == "p%#%p") {
             break;
         }
         Login login{stoi(column1), column2, column3, column4};
@@ -42,10 +42,9 @@ void Csv::listData() {
     fileInput.close();
 }
 
-void Csv::readData(string website, AES_ctx ctx) {
+void Csv::readData(string* website, AES_ctx ctx) {
     fileInput.open(filename);
     while(fileInput.good()) {
-        const int labelWidth = 10;
         string line;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
@@ -54,7 +53,8 @@ void Csv::readData(string website, AES_ctx ctx) {
         getline(fileInput, column3, ',');
         getline(fileInput, column4, ',');
         getline(fileInput, column5, ',');
-        if(column2 == website) {
+        if(column2 == *website) {
+            constexpr int labelWidth = 10;
             Login login{stoi(column1), column2, column3, column4, column5};
             cout << "----------------------------------\n";
             cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
@@ -73,12 +73,44 @@ void Csv::readData(string website, AES_ctx ctx) {
     fileInput.close();
 }
 
-void Csv::writeData(string website, string username, string password) {
+void Csv::writeData(AES_ctx ctx, string* website, string* username, string password) {
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
-    //unfertig
+    fileInput.open(filename);
+
+    int lineNumber = -1;//because line 0 are infos
+    bool newLine = false;
+    while(fileInput.good()) {
+        lineNumber++;
+        string line;
+        string column2;
+        istringstream ss(line);
+        getline(fileInput, column2, ',');
+        if(column2 == "p%#%p") {
+            newLine = false;
+            fileInput.close();
+            break;
+        }
+        else if(column2.empty()) {
+            newLine = true;
+            fileInput.close();
+            break;
+        }
+    }
+    uint8_t iv[16];
+    generateIvFromTime(iv);
+    string encryptedPassword = encrypt(&password[0], ctx, iv);
+    doc.SetCell(newLine, 2, *website);
+    doc.SetCell(newLine, 3, *username);
+    doc.SetCell(newLine, 4, encryptedPassword);
+    doc.SetCell(newLine, 5, iv);
+    if(newLine) {
+        doc.SetCell(newLine, 0, lineNumber+1);
+    }
+    fileInput.close();
+    doc.Save(filename);
 }
 
-void Csv::editData(int change, AES_ctx ctx, string website="", string changeValue="") {
+void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue="") {
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     fileInput.open(filename);
     while(fileInput.good()) {
@@ -90,7 +122,7 @@ void Csv::editData(int change, AES_ctx ctx, string website="", string changeValu
         getline(fileInput, column3, ',');
         getline(fileInput, column4, ',');
         getline(fileInput, column5, ',');
-        if(column2 == website) {
+        if(column2 == *website) {
             if(change > 0 && change < 4) {
                 if(change == 3) {//change password and generate iv
                     uint8_t iv[16];
@@ -128,12 +160,9 @@ void Csv::deleteData(string website) {
             for(int i = 0; i < 6; i++) {
                 doc.SetCell(column1, i, "");
             }
+            doc.SetCell(column1, 2, "p%#%p");
             doc.Save(filename);
         }
         fileInput.close();
     }
 }
-
-//to do list:
-//write new login
-//write all input calls from the user

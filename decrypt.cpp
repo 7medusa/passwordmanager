@@ -6,9 +6,6 @@
 #include <chrono>
 #include <cstring>
 #include "encrypt.h"
-#include "init.h"
-
-//entschlüsseln
 
 bool decryptMasterPassword(string masterPassword) {
     ifstream masterPasswordFile("../masterPasswordHashValue");
@@ -28,10 +25,9 @@ bool decryptMasterPassword(string masterPassword) {
     return false;
 }
 
-string decrypt(string encryptedData, AES_ctx ctx, uint8_t iv[16]) {
-    string output = "";
+string decrypt(const string& encryptedData, AES_ctx ctx, uint8_t iv[16]) {
     uint8_t buffer[32] = {};
-    size_t bufferLength = 32;
+    constexpr size_t bufferLength = 32;
     memcpy(buffer, encryptedData.data(), min(encryptedData.size(), bufferLength));
 
     AES_ctx_set_iv(&ctx, iv);

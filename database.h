@@ -20,9 +20,9 @@ public:
     Csv(const char* fileName);
     ~Csv();
     void listData();
-    void readData(string website, AES_ctx ctx);
-    void writeData(string website, string username, string password);
-    void editData(int change, AES_ctx ctx, string website, string changeValue);
+    void readData(string* website, AES_ctx ctx);
+    void writeData(AES_ctx ctx, string* website, string* username, string password);
+    void editData(int change, AES_ctx ctx, string* website, string changeValue);
     void deleteData(string website);
 private:
     string filename;
