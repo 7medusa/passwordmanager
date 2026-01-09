@@ -51,10 +51,31 @@ bool createMasterpassword() {
     }
 }
 
-void keyFromMasterPassword(const char* password, uint8_t* key) {
-    uint8_t hash[32];
-    SHA256((const uint8_t*)password, strlen(password), hash);
-    memcpy(key, hash, 32);//32 bytes for AES-256 Bit
+void changeMasterpassword(AES_ctx ctx) {
+    string oldMasterpassword;
+    string newMasterpassword;
+    string tempNewMasterpassword;
+    string hashValueOldMasterpassword;
+    cout << "enter your old masterpassword" << endl;
+    getline(cin, oldMasterpassword);
+    if(!decryptMasterPassword(&oldMasterpassword, &masterpasswordPath)) {
+        cout << "MasterPassword incorrect" << endl;
+        return;
+    }
+
+    cout << "enter your new masterpassword" << endl;
+    getline(cin, newMasterpassword);
+    cout << "enter your new masterpassword again" << endl;
+    getline(cin, tempNewMasterpassword);
+    if(tempNewMasterpassword != newMasterpassword) {
+        cout << "password do not match" << endl;
+        return;
+    }
+
+    csv.recryptData(ctx, oldMasterpassword, newMasterpassword);
+    ofstream masterPasswordFile(masterpasswordPath);
+    masterPasswordFile << sha256(newMasterpassword);
+    masterPasswordFile.close();
 }
 
 void function(AES_ctx ctx) {
@@ -119,22 +140,9 @@ void function(AES_ctx ctx) {
                 csv.readData(&website, ctx);
                 break;
             }
-            case 6: {//edit masterpassword
-                //important warning
-                cout << "if you change your masterpassword all encrypted passwords will be gone, do you want to continiue\n[y/n]" << endl;
-                getline(cin, input);
-                if(input == "y") {
-                    string newMasterPassword;
-                    cout << "new masterpassword:" << endl;
-                    getline(cin, newMasterPassword);
-                    string hashValue = sha256(newMasterPassword);
-                    ofstream masterPasswordFile("../masterPasswordHashValue");
-                    masterPasswordFile << hashValue;
-                    masterPasswordFile.close();
-                    cout << "masterpassword changed" << endl;
-                }
-                else {cout << "aborted" << endl;}
-            }
+            case 6://edit masterpassword
+                changeMasterpassword(ctx);
+                break;
             case 7://exit
                 exit(0);
             default:

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <chrono>
 #include <openssl/evp.h>
+#include <openssl/sha.h>
 
 string sha256(const string &input) {
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
@@ -20,6 +21,12 @@ string sha256(const string &input) {
         result << hex << setw(2) << setfill('0') << (int)hash[i];
     }
     return result.str();
+}
+
+void keyFromMasterPassword(const char* password, uint8_t* key) {
+    uint8_t hash[32];
+    SHA256((const uint8_t*)password, strlen(password), hash);
+    memcpy(key, hash, 32);//32 bytes for AES-256 Bit
 }
 
 string encrypt(const char* data, AES_ctx ctx, uint8_t iv[16]) {

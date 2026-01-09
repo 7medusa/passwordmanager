@@ -166,3 +166,44 @@ void Csv::deleteData(string* website) {
         fileInput.close();
     }
 }
+
+void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString) {
+    fileInput.open(filename);
+    int n = 0;
+    while(fileInput.good()) {
+        n++;
+        string line;
+        string column1, column2, column3, column4, column5;
+        istringstream ss(line);
+        getline(fileInput, column1, ',');
+        getline(fileInput, column2, ',');
+        getline(fileInput, column3, ',');
+        getline(fileInput, column4, ',');
+        getline(fileInput, column5, ',');
+        if(column2 != "p%#%p") {
+            const string& hashPassword = column4;
+
+            string oldIv = column5;
+            uint8_t oldKey[32];
+            char* oldPassword = new char[oldPasswordString.length() + 1];
+            keyFromMasterPassword(oldPassword, oldKey);
+            AES_init_ctx_iv(&ctx, oldKey, reinterpret_cast<uint8_t *>(oldIv.data()));
+            string decryptedPassword = decrypt(hashPassword, ctx, reinterpret_cast<uint8_t *>(oldIv.data()));
+
+            uint8_t newIv[16];
+            uint8_t newKey[32];
+            generateIvFromTime(newIv);
+            char* newPassword = new char[newPasswordString.length() + 1];
+            keyFromMasterPassword(newPassword, newKey);
+            AES_init_ctx_iv(&ctx, newKey, newIv);
+            string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
+
+            //daten neu in die file schreiben
+        }
+        else {
+            fileInput.close();
+            return;
+        }
+    }
+    fileInput.close();
+}

@@ -24,6 +24,7 @@ public:
     void writeData(AES_ctx ctx, string* website, string* username, string password);
     void editData(int change, AES_ctx ctx, string* website, string changeValue);
     void deleteData(string* website);
+    void recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString);
 private:
     string filename;
     ofstream fileOutput;
