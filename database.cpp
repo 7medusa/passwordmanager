@@ -169,6 +169,7 @@ void Csv::deleteData(string* website) {
 
 void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString) {
     fileInput.open(filename);
+    rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     int n = 0;
     while(fileInput.good()) {
         n++;
@@ -198,7 +199,9 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
             AES_init_ctx_iv(&ctx, newKey, newIv);
             string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
 
-            //daten neu in die file schreiben
+            doc.SetCell(n, 4, encryptedPassword);
+            doc.SetCell(n, 5, newIv);
+            doc.Save(filename);
         }
         else {
             fileInput.close();
