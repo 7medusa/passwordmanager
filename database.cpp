@@ -102,7 +102,7 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
     doc.SetCell(newLine, 2, *website);
     doc.SetCell(newLine, 3, *username);
     doc.SetCell(newLine, 4, encryptedPassword);
-    doc.SetCell(newLine, 5, iv);
+    doc.SetCell(newLine, 5, string(reinterpret_cast<const char*>(iv), 16));
     if(newLine) {
         doc.SetCell(newLine, 0, lineNumber+1);
     }
@@ -129,7 +129,7 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
                     generateIvFromTime(iv);
                     string password = encrypt(&changeValue[0], ctx, iv);
                     doc.SetCell(column1, 3, password);
-                    doc.SetCell(column1, 4, iv);
+                    doc.SetCell(column1, 4, string(reinterpret_cast<const char*>(iv), 16));
                 }
                 else {
                     doc.SetCell(column1, change + 1, changeValue);
@@ -158,9 +158,9 @@ void Csv::deleteData(string* website) {
         getline(fileInput, column5, ',');
         if(column2 == *website) {
             for(int i = 0; i < 6; i++) {
-                doc.SetCell(column1, i, "");
+                doc.SetCell(column1, i, string(""));
             }
-            doc.SetCell(column1, 2, "p%#%p");
+            doc.SetCell(column1, 2, string("p%#%p"));
             doc.Save(filename);
         }
         fileInput.close();
@@ -200,7 +200,7 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
             string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
 
             doc.SetCell(n, 4, encryptedPassword);
-            doc.SetCell(n, 5, newIv);
+            doc.SetCell(n, 5, string(reinterpret_cast<const char*>(newIv), 16));
             doc.Save(filename);
         }
         else {
