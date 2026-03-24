@@ -6,7 +6,7 @@
 #include "decrypt.h"
 #include "encrypt.h"
 #include "init.h"
-#include "libs/rapidcsv/src/rapidcsv.h"
+#include "../libs/rapidcsv/src/rapidcsv.h"
 
 Csv::Csv(const char* filename) {
     this->filename = filename;

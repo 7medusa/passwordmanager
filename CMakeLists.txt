@@ -4,16 +4,19 @@ project(passwordmanager)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(passwordmanager
-        main.cpp
-        decrypt.h
-        decrypt.cpp
-        database.h
-        database.cpp
-        encrypt.h
-        encrypt.cpp
+        Qt/main.cpp
+        backend/back.h
+        backend/back.cpp
+        backend/decrypt.h
+        backend/decrypt.cpp
+        backend/database.h
+        backend/database.cpp
+        backend/encrypt.h
+        backend/encrypt.cpp
+        backend/init.cpp
+        backend/init.h
         libs/tiny-AES-c/aes.c
-        init.cpp
-        init.h)
+)
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(passwordmanager PRIVATE OpenSSL::Crypto)

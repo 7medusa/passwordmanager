@@ -5,7 +5,6 @@
 #include "database.h"
 #include <openssl/sha.h>
 #include "init.h"
-#include "libs/tiny-AES-c/aes.hpp"
 
 using namespace std;
 
@@ -152,7 +151,7 @@ void function(AES_ctx ctx) {
     }
 }
 
-int main() {
+int back() {
     //check if there is a masterpassword
     bool loop = true;
     while(loop) {
