@@ -19,18 +19,24 @@ Csv::~Csv() {
 
 void Csv::listData() {
     fileInput.open(filename);
-    while(fileInput.good()) {
+    string dummy;
+    getline(fileInput, dummy);
+    string line;
+    while(getline(fileInput, line)) {
         constexpr int labelWidth = 10;
-        string line;
-        string column1, column2, column3, column4;
+        string column1, column2, column3, column4, column5;
         istringstream ss(line);
-        getline(fileInput, column1, ',');
-        getline(fileInput, column2, ',');
-        getline(fileInput, column3, ',');
-        getline(fileInput, column4, ',');
-        if(column2.empty() || column2 == "p%#%p") {
+        getline(ss, column1, ',');
+        getline(ss, column2, ',');
+        getline(ss, column3, ',');
+        getline(ss, column4, ',');
+        getline(ss, column5);
+
+        if(column2.empty() || column2 == "p%#%p")
             break;
-        }
+        if(column1 == "id" || column1 == "")
+            column1 = "0";
+
         Login login{stoi(column1), column2, column3, column4};
         cout << "----------------------------------\n";
         cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
@@ -44,17 +50,21 @@ void Csv::listData() {
 
 void Csv::readData(string* website, AES_ctx ctx) {
     fileInput.open(filename);
-    while(fileInput.good()) {
-        string line;
+    string line;
+    while(getline(fileInput, line)) {
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
-        getline(fileInput, column1, ',');
-        getline(fileInput, column2, ',');
-        getline(fileInput, column3, ',');
-        getline(fileInput, column4, ',');
-        getline(fileInput, column5, ',');
+        getline(ss, column1, ',');
+        getline(ss, column2, ',');
+        getline(ss, column3, ',');
+        getline(ss, column4, ',');
+        getline(ss, column5);
+
         if(column2 == *website) {
             constexpr int labelWidth = 10;
+            if(column1 == "id" || column1 == "")
+                column1 = "0";
+
             Login login{stoi(column1), column2, column3, column4, column5};
             cout << "----------------------------------\n";
             cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
@@ -79,12 +89,12 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
 
     int lineNumber = -1;//because line 0 are infos
     bool newLine = false;
-    while(fileInput.good()) {
+    string line;
+    while(getline(fileInput, line)) {
         lineNumber++;
-        string line;
         string column2;
         istringstream ss(line);
-        getline(fileInput, column2, ',');
+        getline(ss, column2, ',');
         if(column2 == "p%#%p") {
             newLine = false;
             fileInput.close();
@@ -103,9 +113,8 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
     doc.SetCell(newLine, 3, *username);
     doc.SetCell(newLine, 4, encryptedPassword);
     doc.SetCell(newLine, 5, string(reinterpret_cast<const char*>(iv), 16));
-    if(newLine) {
+    if(newLine)
         doc.SetCell(newLine, 0, lineNumber+1);
-    }
     fileInput.close();
     doc.Save(filename);
 }
@@ -113,15 +122,15 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
 void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue="") {
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     fileInput.open(filename);
-    while(fileInput.good()) {
-        string line;
+    string line;
+    while(getline(fileInput, line)) {
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
-        getline(fileInput, column1, ',');
-        getline(fileInput, column2, ',');
-        getline(fileInput, column3, ',');
-        getline(fileInput, column4, ',');
-        getline(fileInput, column5, ',');
+        getline(ss, column1, ',');
+        getline(ss, column2, ',');
+        getline(ss, column3, ',');
+        getline(ss, column4, ',');
+        getline(ss, column5);
         if(column2 == *website) {
             if(change > 0 && change < 4) {
                 if(change == 3) {//change password and generate iv
@@ -147,15 +156,15 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
 void Csv::deleteData(string* website) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
-    while(fileInput.good()) {
-        string line;
+    string line;
+    while(getline(fileInput, line)) {
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
-        getline(fileInput, column1, ',');
-        getline(fileInput, column2, ',');
-        getline(fileInput, column3, ',');
-        getline(fileInput, column4, ',');
-        getline(fileInput, column5, ',');
+        getline(ss, column1, ',');
+        getline(ss, column2, ',');
+        getline(ss, column3, ',');
+        getline(ss, column4, ',');
+        getline(ss, column5);
         if(column2 == *website) {
             for(int i = 0; i < 6; i++) {
                 doc.SetCell(column1, i, string(""));
@@ -170,17 +179,17 @@ void Csv::deleteData(string* website) {
 void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
-    int n = 0;
-    while(fileInput.good()) {
+    int n = 1;
+    string line;
+    while(getline(fileInput, line)) {
         n++;
-        string line;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
-        getline(fileInput, column1, ',');
-        getline(fileInput, column2, ',');
-        getline(fileInput, column3, ',');
-        getline(fileInput, column4, ',');
-        getline(fileInput, column5, ',');
+        getline(ss, column1, ',');
+        getline(ss, column2, ',');
+        getline(ss, column3, ',');
+        getline(ss, column4, ',');
+        getline(ss, column5);
         if(column2 != "p%#%p") {
             const string& hashPassword = column4;
 
@@ -199,8 +208,8 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
             AES_init_ctx_iv(&ctx, newKey, newIv);
             string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
 
-            doc.SetCell(n, 4, encryptedPassword);
-            doc.SetCell(n, 5, string(reinterpret_cast<const char*>(newIv), 16));
+            doc.SetCell(n-1, 4, encryptedPassword);
+            doc.SetCell(n-1, 5, string(reinterpret_cast<const char*>(newIv), 16));
             doc.Save(filename);
         }
         else {

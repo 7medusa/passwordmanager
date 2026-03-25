@@ -26,12 +26,12 @@ bool decryptMasterPassword(const string* masterPassword, const string* masterpas
 }
 
 string decrypt(const string& encryptedData, AES_ctx ctx, uint8_t iv[16]) {
-    uint8_t buffer[32] = {};
     constexpr size_t bufferLength = 32;
-    memcpy(buffer, encryptedData.data(), min(encryptedData.size(), bufferLength));
+    vector<uint8_t> buffer(bufferLength, 0);
+    memcpy(buffer.data(), encryptedData.data(), min(encryptedData.size(), bufferLength));
 
     AES_ctx_set_iv(&ctx, iv);
-    AES_CBC_decrypt_buffer(&ctx, buffer, bufferLength);
+    AES_CBC_decrypt_buffer(&ctx, buffer.data(), bufferLength);
 
-    return (char*)buffer;
+    return (char*)buffer.data();
 }

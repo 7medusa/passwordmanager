@@ -5,17 +5,21 @@
 #include "database.h"
 #include <openssl/sha.h>
 #include "init.h"
+#include <sstream>
 
 using namespace std;
 
-const char* dataCSV = "/home/medusa/projekte/passwordmanager/data.csv";
-const string masterpasswordPath = "../masterPasswordHashValue";
+const char* dataCSV = "/home/medusa/projekte/passwordmanager/backend/data.csv";
+const string masterpasswordPath = "/home/medusa/projekte/passwordmanager/backend/masterPasswordHashValue";
 Csv csv(dataCSV);
 
 bool createMasterpassword() {
-    fstream masterpasswordFile(masterpasswordPath);
-    if(!masterpasswordFile.is_open()) {
-        masterpasswordFile.close();
+    ifstream readMasterpasswordFile(masterpasswordPath);
+    readMasterpasswordFile.open(masterpasswordPath);
+
+    if(!readMasterpasswordFile.is_open()) {
+        readMasterpasswordFile.close();
+        ofstream writeMasterpasswordFile(masterpasswordPath);
         string firstMasterpassword;
         string secondMasterpassword;
         cout << "set your masterpassword" << endl;
@@ -23,16 +27,20 @@ bool createMasterpassword() {
         cout << "repeat your masterpassword" << endl;
         getline(cin, secondMasterpassword);
         if(firstMasterpassword == secondMasterpassword) {
-            masterpasswordFile << sha256(firstMasterpassword);
-            masterpasswordFile.close();
+            writeMasterpasswordFile << sha256(firstMasterpassword);
+            writeMasterpasswordFile.close();
             return true;
         }
         else {cout << "password do not match" << endl;return false;}
     }
     else {
         string currentHashValue;
-        getline(masterpasswordFile, currentHashValue);
+        stringstream buffer;
+        buffer << readMasterpasswordFile.rdbuf();
+        currentHashValue = buffer.str();
+        readMasterpasswordFile.close();
         if(currentHashValue.empty()) {
+            ofstream writeMasterpasswordFile(masterpasswordPath);
             string firstMasterpassword;
             string secondMasterpassword;
             cout << "set your masterpassword" << endl;
@@ -40,8 +48,8 @@ bool createMasterpassword() {
             cout << "repeat your masterpassword" << endl;
             getline(cin, secondMasterpassword);
             if(firstMasterpassword == secondMasterpassword) {
-                masterpasswordFile << sha256(firstMasterpassword);
-                masterpasswordFile.close();
+                writeMasterpasswordFile << sha256(firstMasterpassword);
+                writeMasterpasswordFile.close();
                 return true;
             }
             else {cout << "password do not match" << endl;return false;}
@@ -80,12 +88,15 @@ void changeMasterpassword(AES_ctx ctx) {
 void function(AES_ctx ctx) {
     string input;
     int decision = -1;
-    cout << "1 to add login, 2 to edit login, 3 to delete login, 4 to list all logins, 5 to show specific login, 6 to edit masterpassword, 7 to exit:" << endl;
-    getline(cin, input);
-    try {decision = stoi(input);}
-    catch(invalid_argument& e) {cout << "error: " << endl;}
-
     while(true) {
+
+    if(decision == -1) {
+        cout << "1 to add login, 2 to edit login, 3 to delete login, 4 to list all logins, 5 to show specific login, 6 to edit masterpassword, 7 to exit:" << endl;
+        getline(cin, input);
+        try {decision = stoi(input);}
+        catch(invalid_argument& e) {cout << "error: " << endl;}
+    }
+
         switch(decision) {
             case 1: {
                 //add login
@@ -148,6 +159,7 @@ void function(AES_ctx ctx) {
                 cout << "wrong input" << endl;
                 break;
         }
+        decision = -1;
     }
 }
 

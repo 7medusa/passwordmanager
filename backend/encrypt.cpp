@@ -32,16 +32,14 @@ void keyFromMasterPassword(const char* password, uint8_t* key) {
 string encrypt(const char* data, AES_ctx ctx, uint8_t iv[16]) {
     const size_t length = strlen(data);
     const size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
-    uint8_t buffer[32] = {0};
-    memcpy(buffer, data, length);
+    vector<uint8_t> buffer(bufferLength, 0);
+    memcpy(buffer.data(), data, length);
 
     AES_ctx_set_iv(&ctx, iv);
-    AES_CBC_encrypt_buffer(&ctx, buffer, bufferLength);
+    AES_CBC_encrypt_buffer(&ctx, buffer.data(), bufferLength);
 
     stringstream outputStream;
-    for(int i = 0; i < bufferLength; i++) {
-        outputStream << hex << (int)buffer[i];
-    }
-    string output = outputStream.str();
-    return (char*)buffer;
+    for(int i = 0; i < bufferLength; i++)
+        outputStream << std::hex << std::setw(2) << std::setfill('0') << (int)buffer[i];
+    return outputStream.str();
 }
