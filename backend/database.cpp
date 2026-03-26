@@ -6,6 +6,7 @@
 #include "decrypt.h"
 #include "encrypt.h"
 #include "init.h"
+#include <cstring>
 #include "../libs/rapidcsv/src/rapidcsv.h"
 
 Csv::Csv(const char* filename) {
@@ -56,20 +57,30 @@ void Csv::readData(string* website, AES_ctx ctx) {
         getline(ss, column2, ',');
         getline(ss, column3, ',');
         getline(ss, column4, ',');
-        getline(ss, column5);
+        getline(ss, column5, ',');
 
         if(column2 == *website) {
             constexpr int labelWidth = 10;
-            if(column1 == "id" || column1 == "")
-                column1 = "0";
+            if(column1 == "id" || column1.empty())
+                column1 = "-1";
 
             Login login{stoi(column1), column2, column3, column4, column5};
+
+            auto ivBytes = hexToBytes(login.iv);
+            if (ivBytes.size() != 16) {
+                cerr << "invalid IV format in CSV" << endl;
+                fileInput.close();
+                return;
+            }
+
+            uint8_t iv[16];
+            memcpy(iv, ivBytes.data(), 16);
+
             cout << "----------------------------------\n";
             cout << left << setw(labelWidth) << "ID:" << login.id << '\n';
             cout << left << setw(labelWidth) << "Website:" << login.website << '\n';
             cout << left << setw(labelWidth) << "Username:" << login.username << '\n';
-            cout << left << setw(labelWidth) << "Password:" << decrypt(login.password, ctx, reinterpret_cast<uint8_t *>(login.iv.data())) << '\n';
-            cout << left << setw(labelWidth) << "IV:" << login.iv << '\n';
+            cout << left << setw(labelWidth) << "Password:" << decrypt(login.password, ctx, iv) << '\n';
             cout << "----------------------------------\n";
             fileInput.close();
             return;
@@ -108,13 +119,14 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
     }
     uint8_t iv[16];
     generateIvFromTime(iv);
-    string encryptedPassword = encrypt(&password[0], ctx, iv);
     doc.SetCell(1, lineNumber, *website);
     doc.SetCell(2, lineNumber, *username);
-    doc.SetCell(3, lineNumber, encryptedPassword);
-    doc.SetCell(4, lineNumber, string(reinterpret_cast<const char*>(iv), 16));
+    doc.SetCell(3, lineNumber, encrypt(&password[0], ctx, iv));
+    doc.SetCell(4, lineNumber, bytesToHex(iv, 16));
+
     if(newLine || skipped)
         doc.SetCell(0, lineNumber, lineNumber+1);
+
     fileInput.close();
     doc.Save(filename);
 }
@@ -140,7 +152,7 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
                     generateIvFromTime(iv);
                     string password = encrypt(&changeValue[0], ctx, iv);
                     doc.SetCell(3, lineNumber, password);
-                    doc.SetCell(4, lineNumber, string(reinterpret_cast<const char*>(iv), 16));
+                    doc.SetCell(4, lineNumber, bytesToHex(iv, 16));
                 }
                 else {
                     doc.SetCell(change, lineNumber, changeValue);
@@ -213,7 +225,7 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
             string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
 
             doc.SetCell(4, lineNumber-1, encryptedPassword);
-            doc.SetCell(5, lineNumber-1, string(reinterpret_cast<const char*>(newIv), 16));
+            doc.SetCell(5, lineNumber-1, bytesToHex(newIv, 16));
             doc.Save(filename);
         }
         else {

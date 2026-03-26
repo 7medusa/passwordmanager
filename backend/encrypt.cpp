@@ -29,17 +29,25 @@ void keyFromMasterPassword(const char* password, uint8_t* key) {
     memcpy(key, hash, 32);//32 bytes for AES-256 Bit
 }
 
+string bytesToHex(const uint8_t* data, size_t len) {
+    ostringstream out;
+    for(size_t i = 0; i < len; ++i)
+        out << hex << setw(2) << setfill('0') << static_cast<int>(data[i]);
+    return out.str();
+}
+
 string encrypt(const char* data, AES_ctx ctx, uint8_t iv[16]) {
     const size_t length = strlen(data);
-    const size_t bufferLength = ((length + AES_BLOCKLEN) / AES_BLOCKLEN) * AES_BLOCKLEN;
-    vector<uint8_t> buffer(bufferLength, 0);
-    memcpy(buffer.data(), data, length);
+    vector<uint8_t> buffer(data, data + length);
+    pkcs7Pad(buffer);
 
     AES_ctx_set_iv(&ctx, iv);
-    AES_CBC_encrypt_buffer(&ctx, buffer.data(), bufferLength);
+    AES_CBC_encrypt_buffer(&ctx, buffer.data(), buffer.size());
 
-    stringstream outputStream;
-    for(int i = 0; i < bufferLength; i++)
-        outputStream << std::hex << std::setw(2) << std::setfill('0') << (int)buffer[i];
-    return outputStream.str();
+    return bytesToHex(buffer.data(), buffer.size());
+}
+
+void pkcs7Pad(vector<uint8_t>& buffer) {
+    const size_t padLen = AES_BLOCKLEN - (buffer.size() % AES_BLOCKLEN);
+    buffer.insert(buffer.end(), padLen, static_cast<uint8_t>(padLen));
 }
