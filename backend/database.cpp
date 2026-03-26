@@ -85,12 +85,11 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     fileInput.open(filename);
 
-    int lineNumber = 0;//because line 0 are infos
+    int lineNumber = 0;
     bool newLine = false;
     bool skipped = true;
     string line;
     while(getline(fileInput, line)) {
-        lineNumber++;
         string column2;
         istringstream ss(line);
         getline(ss, column2, ',');
@@ -105,6 +104,7 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
             break;
         }
         skipped = false;
+        lineNumber++;
     }
     uint8_t iv[16];
     generateIvFromTime(iv);
@@ -123,7 +123,9 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     fileInput.open(filename);
     string line;
+    int lineNumber = -1;
     while(getline(fileInput, line)) {
+        lineNumber++;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
         getline(ss, column1, ',');
@@ -137,11 +139,11 @@ void Csv::editData(int change, AES_ctx ctx, string* website, string changeValue=
                     uint8_t iv[16];
                     generateIvFromTime(iv);
                     string password = encrypt(&changeValue[0], ctx, iv);
-                    doc.SetCell(column1, 3, password);
-                    doc.SetCell(column1, 4, string(reinterpret_cast<const char*>(iv), 16));
+                    doc.SetCell(3, lineNumber, password);
+                    doc.SetCell(4, lineNumber, string(reinterpret_cast<const char*>(iv), 16));
                 }
                 else {
-                    doc.SetCell(column1, change + 1, changeValue);
+                    doc.SetCell(change, lineNumber, changeValue);
                 }
                 doc.Save(filename);
             }
@@ -157,7 +159,9 @@ void Csv::deleteData(string* website) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     string line;
+    int lineNumber = -1;
     while(getline(fileInput, line)) {
+        lineNumber++;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
         getline(ss, column1, ',');
@@ -166,10 +170,10 @@ void Csv::deleteData(string* website) {
         getline(ss, column4, ',');
         getline(ss, column5);
         if(column2 == *website) {
-            for(int i = 0; i < 6; i++) {
-                doc.SetCell(column1, i, string(""));
+            for(int i = 1; i < 6; i++) {
+                doc.SetCell(i, lineNumber, string(""));
             }
-            doc.SetCell(column1, 2, string("p%#%p"));
+            doc.SetCell(0, lineNumber, string("p%#%p"));
             doc.Save(filename);
         }
         fileInput.close();
@@ -179,10 +183,10 @@ void Csv::deleteData(string* website) {
 void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
-    int n = 1;
+    int lineNumber = 0;
     string line;
     while(getline(fileInput, line)) {
-        n++;
+        lineNumber++;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
         getline(ss, column1, ',');
@@ -208,8 +212,8 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
             AES_init_ctx_iv(&ctx, newKey, newIv);
             string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
 
-            doc.SetCell(n-1, 4, encryptedPassword);
-            doc.SetCell(n-1, 5, string(reinterpret_cast<const char*>(newIv), 16));
+            doc.SetCell(4, lineNumber-1, encryptedPassword);
+            doc.SetCell(5, lineNumber-1, string(reinterpret_cast<const char*>(newIv), 16));
             doc.Save(filename);
         }
         else {
