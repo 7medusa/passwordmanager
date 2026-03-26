@@ -19,8 +19,6 @@ Csv::~Csv() {
 
 void Csv::listData() {
     fileInput.open(filename);
-    string dummy;
-    getline(fileInput, dummy);
     string line;
     while(getline(fileInput, line)) {
         constexpr int labelWidth = 10;
@@ -78,7 +76,7 @@ void Csv::readData(string* website, AES_ctx ctx) {
         }
     }
     cout << "----------------------------------\n";
-    cout << "No login found for website: " << website << '\n';
+    cout << "No login found for website: " << &website << '\n';
     cout << "----------------------------------\n";
     fileInput.close();
 }
@@ -87,8 +85,9 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
     fileInput.open(filename);
 
-    int lineNumber = -1;//because line 0 are infos
+    int lineNumber = 0;//because line 0 are infos
     bool newLine = false;
+    bool skipped = true;
     string line;
     while(getline(fileInput, line)) {
         lineNumber++;
@@ -100,21 +99,22 @@ void Csv::writeData(AES_ctx ctx, string* website, string* username, string passw
             fileInput.close();
             break;
         }
-        else if(column2.empty()) {
+        if(column2.empty()) {
             newLine = true;
             fileInput.close();
             break;
         }
+        skipped = false;
     }
     uint8_t iv[16];
     generateIvFromTime(iv);
     string encryptedPassword = encrypt(&password[0], ctx, iv);
-    doc.SetCell(newLine, 2, *website);
-    doc.SetCell(newLine, 3, *username);
-    doc.SetCell(newLine, 4, encryptedPassword);
-    doc.SetCell(newLine, 5, string(reinterpret_cast<const char*>(iv), 16));
-    if(newLine)
-        doc.SetCell(newLine, 0, lineNumber+1);
+    doc.SetCell(1, lineNumber, *website);
+    doc.SetCell(2, lineNumber, *username);
+    doc.SetCell(3, lineNumber, encryptedPassword);
+    doc.SetCell(4, lineNumber, string(reinterpret_cast<const char*>(iv), 16));
+    if(newLine || skipped)
+        doc.SetCell(0, lineNumber, lineNumber+1);
     fileInput.close();
     doc.Save(filename);
 }
