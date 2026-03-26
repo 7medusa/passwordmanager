@@ -195,10 +195,11 @@ void Csv::deleteData(string* website) {
 void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string& newPasswordString) {
     fileInput.open(filename);
     rapidcsv::Document doc(filename, rapidcsv::LabelParams(-1, -1));
-    int lineNumber = 0;
+
     string line;
+    int lineNumber = 0;
+
     while(getline(fileInput, line)) {
-        lineNumber++;
         string column1, column2, column3, column4, column5;
         istringstream ss(line);
         getline(ss, column1, ',');
@@ -206,32 +207,48 @@ void Csv::recryptData(AES_ctx ctx, const string& oldPasswordString, const string
         getline(ss, column3, ',');
         getline(ss, column4, ',');
         getline(ss, column5);
-        if(column2 != "p%#%p") {
-            const string& hashPassword = column4;
 
-            string oldIv = column5;
-            uint8_t oldKey[32];
-            char* oldPassword = new char[oldPasswordString.length() + 1];
-            keyFromMasterPassword(oldPassword, oldKey);
-            AES_init_ctx_iv(&ctx, oldKey, reinterpret_cast<uint8_t *>(oldIv.data()));
-            string decryptedPassword = decrypt(hashPassword, ctx, reinterpret_cast<uint8_t *>(oldIv.data()));
-
-            uint8_t newIv[16];
-            uint8_t newKey[32];
-            generateIvFromTime(newIv);
-            char* newPassword = new char[newPasswordString.length() + 1];
-            keyFromMasterPassword(newPassword, newKey);
-            AES_init_ctx_iv(&ctx, newKey, newIv);
-            string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
-
-            doc.SetCell(4, lineNumber-1, encryptedPassword);
-            doc.SetCell(5, lineNumber-1, bytesToHex(newIv, 16));
-            doc.Save(filename);
-        }
-        else {
+        if(column2.empty() || column2 == "p%#%p") {
             fileInput.close();
             return;
         }
+
+        uint8_t oldKey[32];
+        uint8_t newKey[32];
+        keyFromMasterPassword(oldPasswordString.c_str(), oldKey);
+        keyFromMasterPassword(newPasswordString.c_str(), newKey);
+
+        auto oldIvBytes = hexToBytes(column5);
+        if(oldIvBytes.size() != 16) {
+            cerr << "invalid IV format in CSV" << endl;
+            fileInput.close();
+            return;
+        }
+
+        uint8_t oldIv[16];
+        memcpy(oldIv, oldIvBytes.data(), 16);
+
+        AES_init_ctx_iv(&ctx, oldKey, oldIv);
+        string decryptedPassword = decrypt(column4, ctx, oldIv);
+
+        if(decryptedPassword.empty() && !column4.empty()) {
+            cerr << "failed to decrypt entry at line " << lineNumber + 1 << endl;
+            fileInput.close();
+            return;
+        }
+
+        uint8_t newIv[16];
+        generateIvFromTime(newIv);
+
+        AES_init_ctx_iv(&ctx, newKey, newIv);
+        string encryptedPassword = encrypt(decryptedPassword.c_str(), ctx, newIv);
+
+        doc.SetCell(3, lineNumber, encryptedPassword);
+        doc.SetCell(4, lineNumber, bytesToHex(newIv, 16));
+
+        ++lineNumber;
     }
+
     fileInput.close();
+    doc.Save(filename);
 }
