@@ -1,16 +1,11 @@
-#include <cstring>
-#include <iostream>
 #include "decrypt.h"
 #include "encrypt.h"
 #include "database.h"
 #include <openssl/sha.h>
 #include "init.h"
 #include <sstream>
+#include "back.h"
 
-using namespace std;
-
-const char* dataCSV = "/home/medusa/projekte/passwordmanager/backend/data.csv";
-const string masterpasswordPath = "/home/medusa/projekte/passwordmanager/backend/masterPasswordHashValue";
 Csv csv(dataCSV);
 
 bool createMasterpassword() {

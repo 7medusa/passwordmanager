@@ -87,7 +87,7 @@ void Csv::readData(string* website, AES_ctx ctx) {
         }
     }
     cout << "----------------------------------\n";
-    cout << "No login found for website: " << &website << '\n';
+    cout << "No login found for website: " << *website << '\n';
     cout << "----------------------------------\n";
     fileInput.close();
 }

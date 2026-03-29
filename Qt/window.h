@@ -3,14 +3,17 @@
 
 #include <QtWidgets>
 #include "login.h"
+#include "mainMenu.h"
 
 class Window : public QMainWindow {
     Q_OBJECT
 public:
     Window();
-    void loging();
 private:
     Login *login;
+    MainMenu *mainMenu;
+    string masterpassword;
+    void loging();
 };
 
 #endif

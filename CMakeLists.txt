@@ -24,6 +24,8 @@ add_executable(passwordmanager
         Qt/login.cpp
         Qt/window.h
         Qt/window.cpp
+        Qt/mainMenu.h
+        Qt/mainMenu.cpp
 )
 
 find_package(OpenSSL REQUIRED)

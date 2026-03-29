@@ -3,18 +3,22 @@
 
 #include <QtWidgets>
 
+using namespace std;
+
 class Login : public QWidget {
     Q_OBJECT
 public:
     explicit Login(QWidget *parent = nullptr);
-protected:
-    QLabel *passwordText;
+    string masterpasswordInput;
+private:
+    QLabel *labelText, *falsePasswordText;
     QPushButton *submitButton, *exitButton;
     QLineEdit *passwordInput;
     QToolButton *settingsButton;
     void passwordCheck();
     signals:
     void passwordCorrect();
+    void passwordFalse();
 };
 
 #endif
