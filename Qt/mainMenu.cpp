@@ -1,15 +1,19 @@
 #include "mainMenu.h"
 #include <fstream>
-#include "../backend/back.h"
 
 using namespace std;
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
+    addButton = new QPushButton("Add", this);
+    label = new QLabel("search:", this);
+    search = new QLineEdit(this);
     list = new QScrollArea(this);
     listItem = new QWidget(this);
     listLayout = new QVBoxLayout(listItem);
 
+    exitButton->setAutoDefault(true);//enter triggers the button
+    addButton->setAutoDefault(true);
     list->setWidgetResizable(true);
     list->setWidget(listItem);
 
@@ -17,6 +21,9 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
 
     auto layoutH1 = new QVBoxLayout();
     layoutH1->addWidget(exitButton);
+    layoutH1->addWidget(addButton);
+    layoutH1->addWidget(label);
+    layoutH1->addWidget(search);
     layoutH1->addWidget(list);
 
     auto layout = new QVBoxLayout();
@@ -42,9 +49,8 @@ void ListItem::mousePressEvent(QMouseEvent *) {
 
 void MainMenu::refreshList() {
     while(QLayoutItem *item = listLayout->takeAt(0)) {
-        if(item->widget()) {
+        if(item->widget())
             item->widget()->deleteLater();
-        }
         delete item;
     }
     for(const QString &entry : entries) {
@@ -59,7 +65,7 @@ void MainMenu::refreshList() {
 
 void MainMenu::addEntry() {
     ifstream fileInput;
-    fileInput.open(dataCSV);
+    fileInput.open("/home/medusa/projekte/passwordmanager/backend/data.csv");
     string line;
     while(getline(fileInput, line)) {
         string column1, column2, column3, column4, column5;

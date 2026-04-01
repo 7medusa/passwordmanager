@@ -1,7 +1,6 @@
 #include "login.h"
 #include "window.h"
-#include "../backend/decrypt.h"
-#include "../backend/back.h"
+#include "../sqlBackend/masterpassword.h"
 
 Login::Login(QWidget *parent) : QWidget(parent)  {
     labelText = new QLabel("Masterpassword:", this);
@@ -9,9 +8,11 @@ Login::Login(QWidget *parent) : QWidget(parent)  {
     submitButton = new QPushButton("Submit", this);
     exitButton = new QPushButton("Exit", this);
     passwordInput = new QLineEdit(this);
-    settingsButton = new QToolButton(this);
+    settingsButton = new QPushButton("⚙️", this);
 
-    settingsButton->setText("⚙️");
+    submitButton->setAutoDefault(true);
+    exitButton->setAutoDefault(true);
+    settingsButton->setAutoDefault(true);
 
     QObject::connect(submitButton, &QPushButton::clicked, this, &Login::passwordCheck);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
@@ -41,7 +42,7 @@ Login::Login(QWidget *parent) : QWidget(parent)  {
 
 void Login::passwordCheck() {
     masterpasswordInput = passwordInput->text().toStdString();
-    if(decryptMasterPassword(&masterpasswordInput, &masterpasswordPath))
+    if(decryptMasterpassword(&masterpasswordInput, &masterpasswordPath))
         emit passwordCorrect();
     else
         falsePasswordText->setText("Wrong password");

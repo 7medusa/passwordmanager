@@ -13,7 +13,9 @@ private:
     void addEntry();
     void removeEntry();
     void refreshList();
-    QPushButton *exitButton;
+    QPushButton *exitButton, *addButton;
+    QLabel *label;
+    QLineEdit *search;
     QScrollArea *list;
     QWidget *listItem;
     QVBoxLayout *listLayout;

@@ -8,17 +8,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 add_executable(passwordmanager
-        Qt/main.cpp
-        backend/back.h
-        backend/back.cpp
-        backend/decrypt.h
-        backend/decrypt.cpp
-        backend/database.h
-        backend/database.cpp
-        backend/encrypt.h
-        backend/encrypt.cpp
-        backend/init.cpp
-        backend/init.h
+        main.cpp
+        #backend/back.h
+        #backend/back.cpp
+        #backend/decrypt.h
+        #backend/decrypt.cpp
+        #backend/database.h
+        #backend/database.cpp
+        #backend/encrypt.h
+        #backend/encrypt.cpp
+        #backend/init.cpp
+        #backend/init.h
         libs/tiny-AES-c/aes.c
         Qt/login.h
         Qt/login.cpp
@@ -26,6 +26,10 @@ add_executable(passwordmanager
         Qt/window.cpp
         Qt/mainMenu.h
         Qt/mainMenu.cpp
+        sqlBackend/masterpassword.h
+        sqlBackend/masterpassword.cpp
+        sqlBackend/sql.h
+        sqlBackend/sql.cpp
 )
 
 find_package(OpenSSL REQUIRED)
