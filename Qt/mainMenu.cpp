@@ -22,8 +22,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     auto layoutH1 = new QVBoxLayout();
     layoutH1->addWidget(exitButton);
     layoutH1->addWidget(addButton);
-    layoutH1->addWidget(label);
-    layoutH1->addWidget(search);
+    layoutH1->addWidget(label);layoutH1->addWidget(search);
     layoutH1->addWidget(list);
 
     auto layout = new QVBoxLayout();
@@ -65,7 +64,7 @@ void MainMenu::refreshList() {
 
 void MainMenu::addEntry() {
     ifstream fileInput;
-    fileInput.open("/home/medusa/projekte/passwordmanager/backend/data.csv");
+    fileInput.open("../backend/data.csv");
     string line;
     while(getline(fileInput, line)) {
         string column1, column2, column3, column4, column5;

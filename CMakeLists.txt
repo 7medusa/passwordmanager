@@ -34,7 +34,9 @@ add_executable(passwordmanager
 
 find_package(OpenSSL REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(SQLite3 REQUIRED)
 
 target_link_libraries(passwordmanager PRIVATE Qt6::Widgets)
 target_link_libraries(passwordmanager PRIVATE OpenSSL::Crypto)
+target_link_libraries(passwordmanager PRIVATE SQLite::SQLite3)
 target_include_directories(passwordmanager PRIVATE /home/medusa/projekte/studium/libs/tiny-AES-c/aes.hpp)
