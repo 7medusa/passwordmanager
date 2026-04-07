@@ -75,16 +75,33 @@ void Sql::updateData(const string &column, const int &id, const auto &value) {
     sqlString = "UPDATE LOGINS set " + column + " = " + value + " where ID=" + id + "; " \
     "SELECT * from LOGINS";
     sql = sqlString.data();
-    rc = sqlite3_exec(db, sql, saveEntriesCallback, (void*)data, &error);
+    rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
     if( rc != SQLITE_OK ) {
         fprintf(stderr, "SQL error: %s\n", error);
         assert(false);
     }
 }
 
-void Sql::readData() {}
+void Sql::readData(const int &id) {
+    sqlString = "SELECT * FROM LOGINS WHERE id=" + to_string(id) + ";";
+    sql = sqlString.data();
+    rc = sqlite3_exec(db, sql, saveEntrieCallback, (void*)data, &error);
+    if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", error);
+        assert(false);
+    }
+    websiteData = staticBypass.websiteData;
+}
 
-void Sql::deleteData() {}
+void Sql::deleteData(const int &id) {
+    sqlString = "DELETE from LOGINS where ID=" + to_string(id) + ";";
+    sql = sqlString.data();
+    rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
+    if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", error);
+        assert(false);
+    }
+}
 
 void Sql::readTable() {
     sqlString = "SELECT * from LOGINS";
@@ -117,5 +134,29 @@ int Sql::saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColN
         }
     }
     staticBypass.tableEntries.push_back({id, website});
+    return 0;
+}
+
+int Sql::saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+    int id;
+    string website, username, password, iv;
+    for(int i = 0; i < argc; i++) {
+        if(i == 0 && argv[i] != nullptr) {
+            id = atoi(argv[i]);
+        }
+        else if(i == 1 && argv[i] != nullptr) {
+            website = argv[i];
+        }
+        else if(i == 2 && argv[i] != nullptr) {
+            username = argv[i];
+        }
+        else if(i == 3 && argv[i] != nullptr) {
+            password = argv[i];
+        }
+        else if(i == 4 && argv[i] != nullptr) {
+            iv = argv[i];
+        }
+    }
+    staticBypass.websiteData = {id, website, username, password, iv};
     return 0;
 }

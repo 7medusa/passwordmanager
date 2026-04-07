@@ -66,7 +66,7 @@ void MainMenu::addEntry() {
     sql.openDb();
     sql.readTable();
     sql.closeDb();
-    for(const WebsiteData& data : sql.tableEntries)
+    for(const WebsiteDataName& data : sql.tableEntries)
         entries.append(QString::fromStdString(data.website));
     refreshList();
 }

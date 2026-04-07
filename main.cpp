@@ -6,13 +6,13 @@
 void sqlTestFunction() {
     Sql sql;
     sql.openDb();
-    sql.readTable();
+    sql.readData(20);
     sql.closeDb();
     cout << "sql test finished" << endl;
 }
 
 int main(int argc, char *argv[]) {
-    bool x = true;
+    bool x = false;
     if(x) {
         QApplication a(argc, argv);
         Window w;

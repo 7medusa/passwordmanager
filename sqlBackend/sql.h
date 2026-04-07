@@ -7,14 +7,23 @@
 
 using namespace std;
 
-struct WebsiteData {
+struct WebsiteDataName {
     int id;
     string website;
 };
 
+struct WebsiteData {
+    int id;
+    string website;
+    string username;
+    string password;
+    string iv;
+};
+
 class StaticBypass {
 public:
-    vector<WebsiteData> tableEntries;
+    vector<WebsiteDataName> tableEntries;
+    WebsiteData websiteData;
 };
 
 class Sql {
@@ -26,13 +35,15 @@ public:
     void createTable(const string &table);
     void insertData(int id, const string &website, const string &username, const string &password, const string &iv);
     void updateData(const string &column, const int &id, const auto &value);
-    void readData();
-    void deleteData();
+    void readData(const int &id);
+    void deleteData(const int &id);
     void readTable();
-    vector<WebsiteData> tableEntries;
+    vector<WebsiteDataName> tableEntries;
+    WebsiteData websiteData;
 private:
     static int callback(void *NotUsed, int argc, char **argv, char **azColName);
     static int saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColName);
+    static int saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColName);
     static StaticBypass staticBypass;
     sqlite3* db;
     string dbPath;
