@@ -2,6 +2,7 @@
 #define PASSWORDMANAGER_MAINMENU_H
 
 #include <QtWidgets>
+#include "../sqlBackend/sql.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ private:
     QWidget *listItem;
     QVBoxLayout *listLayout;
     QStringList entries;
+    Sql sql;
 };
 
 class ListItem : public QWidget {

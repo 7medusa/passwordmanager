@@ -6,18 +6,21 @@
 void sqlTestFunction() {
     Sql sql;
     sql.openDb();
-    sql.insertData(0, "website", "username", "password", "iv");
+    sql.readTable();
     sql.closeDb();
     cout << "sql test finished" << endl;
 }
 
 int main(int argc, char *argv[]) {
-    //QApplication a(argc, argv);
-    //Window w;
-    //w.show();
-
-    sqlTestFunction();
-
-    return 0;
-    //return a.exec();
+    bool x = true;
+    if(x) {
+        QApplication a(argc, argv);
+        Window w;
+        w.show();
+        return a.exec();
+    }
+    else {
+        sqlTestFunction();
+        return 0;
+    }
 }

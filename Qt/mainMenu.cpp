@@ -63,19 +63,11 @@ void MainMenu::refreshList() {
 }
 
 void MainMenu::addEntry() {
-    ifstream fileInput;
-    fileInput.open("../backend/data.csv");
-    string line;
-    while(getline(fileInput, line)) {
-        string column1, column2, column3, column4, column5;
-        istringstream ss(line);
-        getline(ss, column1, ',');
-        getline(ss, column2, ',');
-        getline(ss, column3, ',');
-        getline(ss, column4, ',');
-        getline(ss, column5);
-        entries.append(QString::fromStdString(column2));
-    }
+    sql.openDb();
+    sql.readTable();
+    sql.closeDb();
+    for(const WebsiteData& data : sql.tableEntries)
+        entries.append(QString::fromStdString(data.website));
     refreshList();
 }
 
