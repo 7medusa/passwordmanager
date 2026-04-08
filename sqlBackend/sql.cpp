@@ -50,13 +50,21 @@ void Sql::createTable(const string &table) {
     }
 }
 
-void Sql::insertData(const int id, const string &website, const string &username, const string &password, const string &iv) {
+void Sql::insertData(const string &website, const string &username, const string &password, const string &iv) {
+    int id;
+    idGap();
+    maxIdToSet();
+    if(staticBypass.idGap != 0)
+        int id = staticBypass.idGap;
+    else
+        id = staticBypass.maxId;
     sqlString = "INSERT INTO LOGINS (id,website,username,password,iv) VALUES (" + to_string(id) + ", '" + website +
                 "', '" + username + "', '" + password + "', '" + iv + "');";
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, callback, nullptr, &error);
     if(rc != SQLITE_OK) {
-        if(strcmp(error, "UNIQUE constraint failed: LOGINS.id") == 0 || strcmp(error, "UNIQUE constraint failed: LOGINS.website") == 0) {
+        if(strcmp(error, "UNIQUE constraint failed: LOGINS.id") == 0 || strcmp(
+               error, "UNIQUE constraint failed: LOGINS.website") == 0) {
             cout << "SQL warning: " << error << endl;
             sqlite3_free(error);
         }
@@ -114,6 +122,28 @@ void Sql::readTable() {
     tableEntries = staticBypass.tableEntries;
 }
 
+int Sql::idGap() {
+    sqlString = "SELECT l1.id + 1 AS fehlende_id FROM LOGINS l1 LEFT JOIN LOGINS l2 ON l2.id = l1.id + 1 WHERE l2.id IS NULL AND l1.id < (SELECT MAX(id) FROM LOGINS) ORDER BY fehlende_id;";
+    sql = sqlString.data();
+    rc = sqlite3_exec(db, sql, idGapCallback, (void*)data, &error);
+    if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", error);
+        assert(false);
+    }
+    return staticBypass.idGap;
+}
+
+int Sql::maxIdToSet() {
+    sqlString = "SELECT MAX(id) AS max_id FROM LOGINS;";
+    sql = sqlString.data();
+    rc = sqlite3_exec(db, sql, maxIdCallback, (void*)data, &error);
+    if( rc != SQLITE_OK ) {
+        fprintf(stderr, "SQL error: %s\n", error);
+        assert(false);
+    }
+    return staticBypass.maxId;
+}
+
 int Sql::callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
     for(i=0; i<argc; i++)
@@ -158,5 +188,18 @@ int Sql::saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColNa
         }
     }
     staticBypass.websiteData = {id, website, username, password, iv};
+    return 0;
+}
+
+int Sql::idGapCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+    staticBypass.idGap = atoi(argv[0]);
+    return 0;
+}
+
+int Sql::maxIdCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+    if(argv[0] == nullptr) {
+        staticBypass.maxId = 0;
+    }
+    staticBypass.maxId = atoi(argv[0]) + 1;
     return 0;
 }

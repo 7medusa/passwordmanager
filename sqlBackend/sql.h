@@ -24,6 +24,8 @@ class StaticBypass {
 public:
     vector<WebsiteDataName> tableEntries;
     WebsiteData websiteData;
+    int idGap;
+    int maxId;
 };
 
 class Sql {
@@ -33,7 +35,7 @@ public:
     void openDb();
     void closeDb();
     void createTable(const string &table);
-    void insertData(int id, const string &website, const string &username, const string &password, const string &iv);
+    void insertData(const string &website, const string &username, const string &password, const string &iv);
     void updateData(const string &column, const int &id, const auto &value);
     void readData(const int &id);
     void deleteData(const int &id);
@@ -41,9 +43,13 @@ public:
     vector<WebsiteDataName> tableEntries;
     WebsiteData websiteData;
 private:
+    int idGap();
+    int maxIdToSet();
     static int callback(void *NotUsed, int argc, char **argv, char **azColName);
     static int saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColName);
     static int saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColName);
+    static int idGapCallback(void *NotUsed, int argc, char **argv, char **azColName);
+    static int maxIdCallback(void *NotUsed, int argc, char **argv, char **azColName);
     static StaticBypass staticBypass;
     sqlite3* db;
     string dbPath;
