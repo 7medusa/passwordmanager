@@ -34,18 +34,6 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     refreshList();
 }
 
-ListItem::ListItem(const QString &text, QWidget *parent) : QWidget(parent){
-    QLabel *label = new QLabel(text, this);
-    QHBoxLayout *layout = new QHBoxLayout();
-    layout->addWidget(label);
-    setLayout(layout);
-    setMouseTracking(true);
-}
-
-void ListItem::mousePressEvent(QMouseEvent *) {
-    emit clicked(this->findChild<QLabel *>()->text());
-}
-
 void MainMenu::refreshList() {
     while(QLayoutItem *item = listLayout->takeAt(0)) {
         if(item->widget())
@@ -55,8 +43,8 @@ void MainMenu::refreshList() {
     for(const QString &entry : entries) {
         auto *item = new ListItem(entry);
         listLayout->addWidget(item);
-        connect(item, &ListItem::clicked, this, [](const QString &text) {
-            qDebug() << "Clicked:" << text;
+        connect(item, &ListItem::clicked, this, [this](const QString &text) {
+            emit entrieClicked(text);
         });
     }
     listLayout->addStretch();
@@ -74,4 +62,16 @@ void MainMenu::addEntry() {
 void MainMenu::removeEntry() {
     entries.clear();
     addEntry();
+}
+
+ListItem::ListItem(const QString &text, QWidget *parent) : QWidget(parent){
+    QLabel *label = new QLabel(text, this);
+    QHBoxLayout *layout = new QHBoxLayout();
+    layout->addWidget(label);
+    setLayout(layout);
+    setMouseTracking(true);
+}
+
+void ListItem::mousePressEvent(QMouseEvent *) {
+    emit clicked(this->findChild<QLabel *>()->text());
 }

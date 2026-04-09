@@ -6,10 +6,17 @@
 
 using namespace std;
 
+struct WebsiteEntry {
+    int id;
+    QString website;
+};
+
 class MainMenu : public QWidget {
     Q_OBJECT
 public:
     explicit MainMenu(QWidget *parent = nullptr);
+    signals:
+    void entrieClicked(const QString &itemText);
 private:
     void addEntry();
     void removeEntry();

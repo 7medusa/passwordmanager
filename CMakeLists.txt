@@ -30,6 +30,8 @@ add_executable(passwordmanager
         sqlBackend/masterpassword.cpp
         sqlBackend/sql.h
         sqlBackend/sql.cpp
+        Qt/entrie.h
+        Qt/entrie.cpp
 )
 
 find_package(OpenSSL REQUIRED)

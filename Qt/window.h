@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include "login.h"
 #include "mainMenu.h"
+#include "entrie.h"
 
 class Window : public QMainWindow {
     Q_OBJECT
@@ -12,8 +13,12 @@ public:
 private:
     Login *login;
     MainMenu *mainMenu;
+    Entrie *entrie;
+    ListItem *listItem;
     string masterpassword;
     void loging();
+    void entrieClicked(const QString &itemText);
+    void entrieExited();
 };
 
 #endif
