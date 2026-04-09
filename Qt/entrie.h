@@ -8,7 +8,15 @@ class Entrie : public QWidget {
     Q_OBJECT
 public:
     explicit Entrie(QWidget *parent = nullptr);
+    int id;
+    QLabel *idText;
+    signals:
+    void exited();
 private:
+    QPushButton *closeButton, *saveButton, *showPassword, *deleteButton;
+    QLabel *saveText;
+    QLineEdit *website, *username, *password;
+    Sql sql;
 };
 
-#endif //PASSWORDMANAGER_ENTRIE_H
+#endif

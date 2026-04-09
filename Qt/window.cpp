@@ -1,44 +1,53 @@
 #include "window.h"
+#include "../defines.h"
 #include <iostream>
+
+using namespace std;
 
 Window::Window() {
     resize(1080, 1920);
     setWindowTitle("Passwordmanager");
 
+    stack = new QStackedWidget();
     login = new Login();
     mainMenu = new MainMenu();
     entrie = new Entrie();
 
-    QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
-    QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {
-        entrieClicked(id);
-    });
+    stack->addWidget(login);
+    stack->addWidget(mainMenu);
+    stack->addWidget(entrie);
+    setCentralWidget(stack);
 
-    setCentralWidget(login);
+    QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
+    QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {entrieClicked(id);});
+    QObject::connect(entrie, &Entrie::exited, this, &Window::entrieExited);
+
+#ifndef DEBUG
+    stack->setCurrentWidget(login);
     login->show();
+#else
+    stack->setCurrentWidget(mainMenu);
+    mainMenu->show();
+#endif
 }
 
 void Window::loging() {
     masterpassword = login->masterpasswordInput;
     login->hide();
-    setCentralWidget(mainMenu);
+    stack->setCurrentWidget(mainMenu);
     mainMenu->show();
 }
 
 void Window::entrieClicked(int id) {
-    sql.openDb();
-    sql.readData(id);
-    sql.closeDb();
-    cout << sql.websiteData.website << endl;
-    /*
     mainMenu->hide();
-    setCentralWidget(entrie);
+    entrie->id = id;
+    entrie->idText->setText(QString::fromStdString(to_string(id)));
+    stack->setCurrentWidget(entrie);
     entrie->show();
-    */
 }
 
 void Window::entrieExited() {
     entrie->hide();
-    mainMenu->show();
-    setCentralWidget(mainMenu);
+    stack->setCurrentWidget(mainMenu);
+    mainMenu->show();//hier error seg fault
 }

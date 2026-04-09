@@ -1,6 +1,10 @@
 #include "login.h"
 #include "window.h"
 #include "../sqlBackend/masterpassword.h"
+#include "../defines.h"
+#include <iostream>
+
+using namespace std;
 
 Login::Login(QWidget *parent) : QWidget(parent)  {
     labelText = new QLabel("Masterpassword:", this);

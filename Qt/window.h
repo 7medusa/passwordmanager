@@ -12,6 +12,7 @@ class Window : public QMainWindow {
 public:
     Window();
 private:
+    QStackedWidget *stack;
     Login *login;
     MainMenu *mainMenu;
     Entrie *entrie;

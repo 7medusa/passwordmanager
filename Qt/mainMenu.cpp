@@ -1,5 +1,7 @@
 #include "mainMenu.h"
 #include <fstream>
+#include <iostream>
+#include "../defines.h"
 
 using namespace std;
 
@@ -45,6 +47,9 @@ void MainMenu::refreshList() {
         listLayout->addWidget(item);
         connect(item, &ListItem::clicked, this, [this](int id) {
             emit entrieClicked(id);
+#ifdef DEBUG
+            cout << "clicked: " << id << endl;
+#endif
         });
     }
     listLayout->addStretch();
