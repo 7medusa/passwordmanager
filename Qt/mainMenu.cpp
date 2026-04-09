@@ -54,6 +54,7 @@ void MainMenu::addEntry() {
     sql.openDb();
     sql.readTable();
     sql.closeDb();
+    entries.clear();
     for(const WebsiteDataName& data : sql.tableEntries)
         entries.append(QString::fromStdString(data.website));
     refreshList();
