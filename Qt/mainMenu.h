@@ -16,7 +16,7 @@ class MainMenu : public QWidget {
 public:
     explicit MainMenu(QWidget *parent = nullptr);
     signals:
-    void entrieClicked(const QString &itemText);
+    void entrieClicked(int id);
 private:
     void addEntry();
     void removeEntry();
@@ -27,17 +27,18 @@ private:
     QScrollArea *list;
     QWidget *listItem;
     QVBoxLayout *listLayout;
-    QStringList entries;
+    QList<WebsiteEntry> entries;
     Sql sql;
 };
 
 class ListItem : public QWidget {
     Q_OBJECT
 public:
-    explicit ListItem(const QString &text, QWidget *parent = nullptr);
+    explicit ListItem(int id, const QString &text, QWidget *parent = nullptr);
     signals:
-        void clicked(const QString &itemText);
+        void clicked(int id);
 private:
+    int entryId;
     void mousePressEvent(QMouseEvent *) override;
 };
 

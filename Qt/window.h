@@ -5,6 +5,7 @@
 #include "login.h"
 #include "mainMenu.h"
 #include "entrie.h"
+#include "../sqlBackend/sql.h"
 
 class Window : public QMainWindow {
     Q_OBJECT
@@ -16,8 +17,9 @@ private:
     Entrie *entrie;
     ListItem *listItem;
     string masterpassword;
+    Sql sql;
     void loging();
-    void entrieClicked(const QString &itemText);
+    void entrieClicked(int id);
     void entrieExited();
 };
 

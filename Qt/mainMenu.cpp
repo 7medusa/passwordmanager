@@ -40,11 +40,11 @@ void MainMenu::refreshList() {
             item->widget()->deleteLater();
         delete item;
     }
-    for(const QString &entry : entries) {
-        auto *item = new ListItem(entry);
+    for(const WebsiteEntry &entry : entries) {
+        auto *item = new ListItem(entry.id, entry.website);
         listLayout->addWidget(item);
-        connect(item, &ListItem::clicked, this, [this](const QString &text) {
-            emit entrieClicked(text);
+        connect(item, &ListItem::clicked, this, [this](int id) {
+            emit entrieClicked(id);
         });
     }
     listLayout->addStretch();
@@ -55,8 +55,12 @@ void MainMenu::addEntry() {
     sql.readTable();
     sql.closeDb();
     entries.clear();
-    for(const WebsiteDataName& data : sql.tableEntries)
-        entries.append(QString::fromStdString(data.website));
+    for(const WebsiteDataName& data : sql.tableEntries) {
+        WebsiteEntry entry;
+        entry.id = data.id;
+        entry.website = QString::fromStdString(data.website);
+        entries.append(entry);
+    }
     refreshList();
 }
 
@@ -65,8 +69,8 @@ void MainMenu::removeEntry() {
     addEntry();
 }
 
-ListItem::ListItem(const QString &text, QWidget *parent) : QWidget(parent){
-    QLabel *label = new QLabel(text, this);
+ListItem::ListItem(int id, const QString &text, QWidget *parent) : QWidget(parent), entryId(id) {  // ID speichern
+    QLabel *label = new QLabel(text, this);  // Nur Name anzeigen
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(label);
     setLayout(layout);
@@ -74,5 +78,5 @@ ListItem::ListItem(const QString &text, QWidget *parent) : QWidget(parent){
 }
 
 void ListItem::mousePressEvent(QMouseEvent *) {
-    emit clicked(this->findChild<QLabel *>()->text());
+    emit clicked(entryId);
 }

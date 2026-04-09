@@ -10,8 +10,8 @@ Window::Window() {
     entrie = new Entrie();
 
     QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
-    QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](const QString &itemText) {
-        entrieClicked(itemText);
+    QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {
+        entrieClicked(id);
     });
 
     setCentralWidget(login);
@@ -25,7 +25,11 @@ void Window::loging() {
     mainMenu->show();
 }
 
-void Window::entrieClicked(const QString &itemText) {
+void Window::entrieClicked(int id) {
+    sql.openDb();
+    sql.readData(id);
+    sql.closeDb();
+    cout << sql.websiteData.website << endl;
     /*
     mainMenu->hide();
     setCentralWidget(entrie);
