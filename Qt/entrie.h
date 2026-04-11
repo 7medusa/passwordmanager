@@ -9,13 +9,20 @@ class Entrie : public QWidget {
 public:
     explicit Entrie(QWidget *parent = nullptr);
     int id;
+    string website, username;
     QLabel *idText;
+    QLineEdit *websiteLine, *usernameLine;
     signals:
     void exited();
 private:
+    void updateEntrie();
+    void deleteEntrie();
+    void showPasswordClicked();
+    void encryptPassword();
+    void decryptPassword();
     QPushButton *closeButton, *saveButton, *showPassword, *deleteButton;
     QLabel *saveText;
-    QLineEdit *website, *username, *password;
+    QLineEdit *passwordLine;
     Sql sql;
 };
 

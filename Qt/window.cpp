@@ -39,9 +39,16 @@ void Window::loging() {
 }
 
 void Window::entrieClicked(int id) {
+    sql.openDb();
+    sql.readData(id);
+    sql.closeDb();
     mainMenu->hide();
     entrie->id = id;
+    entrie->website = sql.websiteData.website;
+    entrie->username = sql.websiteData.username;
     entrie->idText->setText(QString::fromStdString(to_string(id)));
+    entrie->websiteLine->setText(QString::fromStdString(entrie->website));
+    entrie->usernameLine->setText(QString::fromStdString(entrie->username));
     stack->setCurrentWidget(entrie);
     entrie->show();
 }
@@ -49,5 +56,5 @@ void Window::entrieClicked(int id) {
 void Window::entrieExited() {
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
-    mainMenu->show();//hier error seg fault
+    mainMenu->show();
 }
