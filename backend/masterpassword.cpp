@@ -1,5 +1,4 @@
 #include "masterpassword.h"
-
 #include <iostream>
 #include <cstring>
 #include <chrono>

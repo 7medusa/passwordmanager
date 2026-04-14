@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const string masterpasswordPath = "../sqlBackend/masterPasswordHashValue";
+const string masterpasswordPath = "../backend/masterPasswordHashValue";
 
 bool decryptMasterpassword(const string* masterPassword, const string* masterpasswordPath);
 string sha256(const string &input);

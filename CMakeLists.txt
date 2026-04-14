@@ -9,16 +9,10 @@ set(CMAKE_AUTOUIC ON)
 
 add_executable(passwordmanager
         main.cpp
-        #backend/back.h
-        #backend/back.cpp
-        #backend/decrypt.h
-        #backend/decrypt.cpp
-        #backend/database.h
-        #backend/database.cpp
-        #backend/encrypt.h
-        #backend/encrypt.cpp
-        #backend/init.cpp
-        #backend/init.h
+        backend/encrypt.h
+        backend/encrypt.cpp
+        backend/decrypt.h
+        backend/decrypt.cpp
         libs/tiny-AES-c/aes.c
         Qt/login.h
         Qt/login.cpp
