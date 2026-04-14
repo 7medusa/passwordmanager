@@ -21,6 +21,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     list->setWidget(listItem);
 
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
+    QObject::connect(search, &QLineEdit::textEdited, this, [this]() {searchEntrie(search->text().toStdString());});
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
@@ -84,8 +85,30 @@ void MainMenu::entrieRemoved() {
     addEntrie();
 }
 
+void MainMenu::searchEntrie(string entrieName) {
+    sql.openDb();
+    sql.readTable();
+    sql.closeDb();
+    entries.clear();
+    for(const WebsiteDataName& data : sql.tableEntries) {
+        if(entrieName.empty()) {
+            addEntrie();
+            return;
+        }
+        else if(data.website.starts_with(entrieName)) {
+            WebsiteEntry entry;
+            entry.id = data.id;
+            entry.website = QString::fromStdString(data.website);
+            entries.append(entry);
+        }
+    }
+    refreshList();
+    n = entries.size();
+    entrieLabel->setText("Entries: " + QString::number(n));
+}
+
 ListItem::ListItem(int id, const QString &text, QWidget *parent) : QWidget(parent), entryId(id) {  // ID speichern
-    QLabel *label = new QLabel(text, this);  // Nur Name anzeigen
+    QLabel *label = new QLabel(text, this);
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(label);
     setLayout(layout);

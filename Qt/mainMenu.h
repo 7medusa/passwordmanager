@@ -17,14 +17,15 @@ public:
     explicit MainMenu(QWidget *parent = nullptr);
     void addEntrie();
     void entrieRemoved();
+    QLineEdit *search;
     signals:
     void entrieClicked(int id);
 private:
     void refreshList();
+    void searchEntrie(string entrieName);
     int n;
-    QPushButton *exitButton, *addButton;
+    QPushButton *exitButton, *addButton, *clearFilterButton;
     QLabel *searchLabel, *entrieLabel;
-    QLineEdit *search;
     QScrollArea *list;
     QWidget *listItem;
     QVBoxLayout *listLayout;

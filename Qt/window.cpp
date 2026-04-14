@@ -59,4 +59,5 @@ void Window::entrieExited() {
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
+    mainMenu->search->setText("");
 }

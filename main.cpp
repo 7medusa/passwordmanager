@@ -6,6 +6,7 @@
 void sqlTestFunction() {
     Sql sql;
     sql.openDb();
+    sql.insertData("searchh", "searchh", "searchh", "searchh");
     sql.closeDb();
     cout << "sql test finished" << endl;
 }
