@@ -7,7 +7,7 @@
 StaticBypass Sql::staticBypass;
 
 Sql::Sql() {
-    dbPath = "../sqlBackend/data.db";
+    dbPath = "../backend/data.db";
     sqlString = "";
     error = nullptr;
     sql = nullptr;
@@ -51,13 +51,26 @@ void Sql::createTable(const string &table) {
 }
 
 void Sql::insertData(const string &website, const string &username, const string &password, const string &iv) {
+    sqlString = "INSERT INTO LOGINS (id,website,username,password,iv) VALUES (0, '0', '0', '0', '0');";
+    sql = sqlString.data();
+    rc = sqlite3_exec(db, sql, callback, nullptr, &error);
+    if(rc != SQLITE_OK) {
+#ifdef DEBUG
+        cout << "SQL error: " << error << endl;
+#endif
+    }
     int id;
     idGap();
     maxIdToSet();
-    if(staticBypass.idGap != 0)
-        int id = staticBypass.idGap;
-    else
+#ifdef DEBUG
+    cout << staticBypass.idGap << endl;
+#endif
+    if(staticBypass.idGap > 0) {
+        id = staticBypass.idGap;
+    }
+    else {
         id = staticBypass.maxId;
+    }
     sqlString = "INSERT INTO LOGINS (id,website,username,password,iv) VALUES (" + to_string(id) + ", '" + website +
                 "', '" + username + "', '" + password + "', '" + iv + "');";
     sql = sqlString.data();
@@ -112,6 +125,8 @@ void Sql::deleteData(const int &id) {
 }
 
 void Sql::readTable() {
+    tableEntries.clear();
+    staticBypass.tableEntries.clear();
     sqlString = "SELECT * from LOGINS";
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, saveEntriesCallback, (void*)data, &error);

@@ -2,7 +2,7 @@
 #define PASSWORDMANAGER_ENTRIE_H
 
 #include <QtWidgets>
-#include "../sqlBackend/sql.h"
+#include "../backend/sql.h"
 
 class Entrie : public QWidget {
     Q_OBJECT
@@ -20,6 +20,7 @@ private:
     void showPasswordClicked();
     void encryptPassword();
     void decryptPassword();
+    bool passwordShown;
     QPushButton *closeButton, *saveButton, *showPassword, *deleteButton;
     QLabel *saveText;
     QLineEdit *passwordLine;

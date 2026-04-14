@@ -5,13 +5,16 @@
 #include "login.h"
 #include "mainMenu.h"
 #include "entrie.h"
-#include "../sqlBackend/sql.h"
+#include "../backend/sql.h"
 
 class Window : public QMainWindow {
     Q_OBJECT
 public:
     Window();
 private:
+    void loging();
+    void entrieClicked(int id);
+    void entrieExited();
     QStackedWidget *stack;
     Login *login;
     MainMenu *mainMenu;
@@ -19,9 +22,6 @@ private:
     ListItem *listItem;
     string masterpassword;
     Sql sql;
-    void loging();
-    void entrieClicked(int id);
-    void entrieExited();
 };
 
 #endif

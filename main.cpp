@@ -1,6 +1,6 @@
 #include <QtWidgets>
 #include "Qt/window.h"
-#include "sqlBackend/sql.h"
+#include "backend/sql.h"
 #include <iostream>
 
 void sqlTestFunction() {

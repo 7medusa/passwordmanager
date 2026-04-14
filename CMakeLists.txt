@@ -26,10 +26,10 @@ add_executable(passwordmanager
         Qt/window.cpp
         Qt/mainMenu.h
         Qt/mainMenu.cpp
-        sqlBackend/masterpassword.h
-        sqlBackend/masterpassword.cpp
-        sqlBackend/sql.h
-        sqlBackend/sql.cpp
+        backend/masterpassword.h
+        backend/masterpassword.cpp
+        backend/sql.h
+        backend/sql.cpp
         Qt/entrie.h
         Qt/entrie.cpp
         defines.h

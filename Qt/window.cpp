@@ -32,6 +32,7 @@ Window::Window() {
 }
 
 void Window::loging() {
+    mainMenu->addEntrie();
     masterpassword = login->masterpasswordInput;
     login->hide();
     stack->setCurrentWidget(mainMenu);
@@ -54,6 +55,7 @@ void Window::entrieClicked(int id) {
 }
 
 void Window::entrieExited() {
+    mainMenu->entrieRemoved();
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();

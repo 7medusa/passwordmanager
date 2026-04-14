@@ -5,6 +5,8 @@
 using namespace std;
 
 Entrie::Entrie(QWidget *parent) : QWidget(parent) {
+    passwordShown = false;
+
     closeButton = new QPushButton("Close", this);
     saveButton = new QPushButton("Save", this);
     showPassword = new QPushButton("Show password", this);
@@ -22,19 +24,16 @@ Entrie::Entrie(QWidget *parent) : QWidget(parent) {
     deleteButton->setAutoDefault(true);
 
     QObject::connect(closeButton, &QPushButton::clicked, this, &Entrie::exited);
+    QObject::connect(deleteButton, &QPushButton::clicked, this, &Entrie::deleteEntrie);
 
-    auto layoutH1 = new QVBoxLayout();
-    layoutH1->addSpacerItem(new QSpacerItem(400, 200, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(saveButton);
     layoutH1->addWidget(closeButton);
     layoutH1->addWidget(deleteButton);
-    layoutH1->addSpacerItem(new QSpacerItem(400, 200, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
-    auto layoutH2 = new QVBoxLayout();
-    layoutH2->addSpacerItem(new QSpacerItem(400, 200, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    auto layoutH2 = new QHBoxLayout();
     layoutH2->addWidget(passwordLine);
     layoutH2->addWidget(showPassword);
-    layoutH2->addSpacerItem(new QSpacerItem(400, 200, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     auto layout = new QVBoxLayout(this);
     layout->addLayout(layoutH1);
@@ -50,7 +49,12 @@ Entrie::Entrie(QWidget *parent) : QWidget(parent) {
 
 void Entrie::updateEntrie() {}
 
-void Entrie::deleteEntrie() {}
+void Entrie::deleteEntrie() {
+    sql.openDb();
+    sql.deleteData(id);
+    sql.closeDb();
+    emit exited();
+}
 
 void Entrie::showPasswordClicked() {}
 

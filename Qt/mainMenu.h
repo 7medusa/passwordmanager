@@ -2,7 +2,7 @@
 #define PASSWORDMANAGER_MAINMENU_H
 
 #include <QtWidgets>
-#include "../sqlBackend/sql.h"
+#include "../backend/sql.h"
 
 using namespace std;
 
@@ -15,14 +15,15 @@ class MainMenu : public QWidget {
     Q_OBJECT
 public:
     explicit MainMenu(QWidget *parent = nullptr);
+    void addEntrie();
+    void entrieRemoved();
     signals:
     void entrieClicked(int id);
 private:
-    void addEntry();
-    void removeEntry();
     void refreshList();
+    int n;
     QPushButton *exitButton, *addButton;
-    QLabel *label;
+    QLabel *searchLabel, *entrieLabel;
     QLineEdit *search;
     QScrollArea *list;
     QWidget *listItem;

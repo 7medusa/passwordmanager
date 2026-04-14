@@ -11,10 +11,10 @@ public:
     explicit Login(QWidget *parent = nullptr);
     string masterpasswordInput;
 private:
+    void passwordCheck();
     QLabel *labelText, *falsePasswordText;
     QPushButton *submitButton, *exitButton, *settingsButton;
     QLineEdit *passwordInput;
-    void passwordCheck();
     signals:
     void passwordCorrect();
     void passwordFalse();

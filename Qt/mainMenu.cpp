@@ -8,32 +8,39 @@ using namespace std;
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
     addButton = new QPushButton("Add", this);
-    label = new QLabel("search:", this);
+    searchLabel = new QLabel("search:", this);
+    entrieLabel = new QLabel("Entries: " + QString::number(-1), this);
     search = new QLineEdit(this);
     list = new QScrollArea(this);
     listItem = new QWidget(this);
     listLayout = new QVBoxLayout(listItem);
 
-    exitButton->setAutoDefault(true);//enter triggers the button
+    exitButton->setAutoDefault(true);
     addButton->setAutoDefault(true);
     list->setWidgetResizable(true);
     list->setWidget(listItem);
 
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
 
-    auto layoutH1 = new QVBoxLayout();
+    auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
     layoutH1->addWidget(addButton);
-    layoutH1->addWidget(label);layoutH1->addWidget(search);
-    layoutH1->addWidget(list);
+
+    auto layoutH2 = new QHBoxLayout();
+    layoutH2->addWidget(searchLabel);layoutH2->addWidget(search);
+
+    auto layoutV1 = new QVBoxLayout();
+    layoutV1->addWidget(entrieLabel);
+    layoutV1->addWidget(list);
 
     auto layout = new QVBoxLayout();
     layout->addLayout(layoutH1);
+    layout->addLayout(layoutH2);
+    layout->addLayout(layoutV1);
     layout->setAlignment(Qt::AlignCenter);
     setLayout(layout);
 
-    addEntry();
-    refreshList();
+    addEntrie();
 }
 
 void MainMenu::refreshList() {
@@ -55,7 +62,7 @@ void MainMenu::refreshList() {
     listLayout->addStretch();
 }
 
-void MainMenu::addEntry() {
+void MainMenu::addEntrie() {
     sql.openDb();
     sql.readTable();
     sql.closeDb();
@@ -66,12 +73,15 @@ void MainMenu::addEntry() {
         entry.website = QString::fromStdString(data.website);
         entries.append(entry);
     }
+    entries.removeFirst();
     refreshList();
+    n = entries.size();
+    entrieLabel->setText("Entries: " + QString::number(n));
 }
 
-void MainMenu::removeEntry() {
+void MainMenu::entrieRemoved() {
     entries.clear();
-    addEntry();
+    addEntrie();
 }
 
 ListItem::ListItem(int id, const QString &text, QWidget *parent) : QWidget(parent), entryId(id) {  // ID speichern

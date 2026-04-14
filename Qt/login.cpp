@@ -1,6 +1,6 @@
 #include "login.h"
 #include "window.h"
-#include "../sqlBackend/masterpassword.h"
+#include "../backend/masterpassword.h"
 #include "../defines.h"
 #include <iostream>
 
