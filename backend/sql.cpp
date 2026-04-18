@@ -137,7 +137,14 @@ void Sql::readData(const int &id, AES_ctx ctx) {
         assert(false);
     }
     websiteData = staticBypass.websiteData;
-    websiteData.password = decrypt(websiteData.password, ctx, hexToBytes(websiteData.iv).data());
+    auto ivBytes = hexToBytes(websiteData.iv);
+#ifdef DEBUG
+    if(ivBytes.size() != 16)
+        cout << "invalid IV format" << endl;
+#endif
+    uint8_t iv[16];
+    memcpy(iv, ivBytes.data(), 16);
+    websiteData.password = decrypt(websiteData.password, ctx, iv);
 }
 
 void Sql::deleteData(const int &id) {
