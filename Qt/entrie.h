@@ -7,7 +7,7 @@
 class Entrie : public QWidget {
     Q_OBJECT
 public:
-    explicit Entrie(QWidget *parent = nullptr);
+    explicit Entrie(AES_ctx &ctx, QWidget *parent = nullptr);
     int id;
     string website, username;
     QLabel *idText;
@@ -17,14 +17,27 @@ public:
 private:
     void updateEntrie();
     void deleteEntrie();
-    void showPasswordClicked();
+    void showPasswordClicked(AES_ctx ctx);
     void encryptPassword();
     void decryptPassword();
     bool passwordShown;
+    AES_ctx& ctx;
     QPushButton *closeButton, *saveButton, *showPassword, *deleteButton;
     QLabel *saveText;
     QLineEdit *passwordLine;
     Sql sql;
+};
+
+class AddEntrie : public QWidget {
+    Q_OBJECT
+public:
+    explicit AddEntrie(QWidget *parent = nullptr);
+private:
+    void encryptPassword();
+    Sql sql;
+    QPushButton *addButton, *exitButton;
+    QLineEdit *websiteLine, *usernameLine, *passwordLine;
+    QLabel *websiteLabel, *usernameLabel, *passwordLabel;
 };
 
 #endif

@@ -2,25 +2,12 @@
 #include "Qt/window.h"
 #include "backend/sql.h"
 #include <iostream>
-
-void sqlTestFunction() {
-    Sql sql;
-    sql.openDb();
-    sql.insertData("searchh", "searchh", "searchh", "searchh");
-    sql.closeDb();
-    cout << "sql test finished" << endl;
-}
+#include "backend/decrypt.h"
+#include "backend/encrypt.h"
 
 int main(int argc, char *argv[]) {
-    bool x = true;
-    if(x) {
-        QApplication a(argc, argv);
-        Window w;
-        w.show();
-        return a.exec();
-    }
-    else {
-        sqlTestFunction();
-        return 0;
-    }
+    QApplication a(argc, argv);
+    Window w;
+    w.show();
+    return a.exec();
 }

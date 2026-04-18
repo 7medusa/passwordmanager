@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Entrie::Entrie(QWidget *parent) : QWidget(parent) {
+Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     passwordShown = false;
 
     closeButton = new QPushButton("Close", this);
@@ -21,10 +21,10 @@ Entrie::Entrie(QWidget *parent) : QWidget(parent) {
     saveButton->setAutoDefault(true);
     deleteButton->setAutoDefault(true);
     showPassword->setAutoDefault(true);
-    deleteButton->setAutoDefault(true);
 
     QObject::connect(closeButton, &QPushButton::clicked, this, &Entrie::exited);
     QObject::connect(deleteButton, &QPushButton::clicked, this, &Entrie::deleteEntrie);
+    QObject::connect(showPassword, &QPushButton::clicked, this, [this, ctx]() { showPasswordClicked(ctx); });
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(saveButton);
@@ -56,8 +56,37 @@ void Entrie::deleteEntrie() {
     emit exited();
 }
 
-void Entrie::showPasswordClicked() {}
+void Entrie::showPasswordClicked(AES_ctx ctx) {
+    if(passwordShown) {
+        passwordLine->setText("********");
+        passwordShown = false;
+        sql.websiteData.password = "";
+    }
+    else {
+        sql.openDb();
+        sql.readData(id, ctx);
+        sql.closeDb();
+        passwordLine->setText(QString::fromStdString(sql.websiteData.password));
+        passwordShown = false;
+    }
+}
 
 void Entrie::encryptPassword() {}
 
 void Entrie::decryptPassword() {}
+
+AddEntrie::AddEntrie(QWidget *parent) : QWidget(parent) {
+    addButton = new QPushButton("add", this);
+    exitButton = new QPushButton("exit", this);
+    websiteLine = new QLineEdit(this);
+    usernameLine = new QLineEdit(this);
+    passwordLine = new QLineEdit(this);
+    websiteLabel = new QLabel("Website:", this);
+    usernameLabel = new QLabel("Username:", this);
+    passwordLabel = new QLabel("Password:", this);
+
+    addButton->setAutoDefault(true);
+    exitButton->setAutoDefault(true);
+}
+
+void AddEntrie::encryptPassword() {}

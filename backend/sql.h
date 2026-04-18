@@ -4,6 +4,7 @@
 #include <sqlite3.h>
 #include <string>
 #include <vector>
+#include "../libs/tiny-AES-c/aes.hpp"
 
 using namespace std;
 
@@ -35,9 +36,9 @@ public:
     void openDb();
     void closeDb();
     void createTable(const string &table);
-    void insertData(const string &website, const string &username, const string &password, const string &iv);
-    void updateData(const string &column, const int &id, const auto &value);
-    void readData(const int &id);
+    void insertData(const string &website, const string &username, const string &password, AES_ctx ctx);
+    void updateData(const string &column, const int &id, const auto &value, AES_ctx ctx);
+    void readData(const int &id, AES_ctx ctx);
     void deleteData(const int &id);
     void readTable();
     vector<WebsiteDataName> tableEntries;

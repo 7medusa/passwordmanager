@@ -44,6 +44,35 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     addEntrie();
 }
 
+void MainMenu::addEntrie() {
+    sql.openDb();
+    sql.readTable();
+    sql.closeDb();
+    entries.clear();
+    for(const WebsiteDataName& data : sql.tableEntries) {
+        WebsiteEntry entry;
+        entry.id = data.id;
+        entry.website = QString::fromStdString(data.website);
+        entries.append(entry);
+    }
+    if(!entries.isEmpty()) {
+        entries.removeFirst();
+    }
+    else {
+#ifdef DEBUG
+        cout << "no entries" << endl;
+#endif
+    }
+    refreshList();
+    n = entries.size();
+    entrieLabel->setText("Entries: " + QString::number(n));
+}
+
+void MainMenu::entrieRemoved() {
+    entries.clear();
+    addEntrie();
+}
+
 void MainMenu::refreshList() {
     while(QLayoutItem *item = listLayout->takeAt(0)) {
         if(item->widget())
@@ -61,28 +90,6 @@ void MainMenu::refreshList() {
         });
     }
     listLayout->addStretch();
-}
-
-void MainMenu::addEntrie() {
-    sql.openDb();
-    sql.readTable();
-    sql.closeDb();
-    entries.clear();
-    for(const WebsiteDataName& data : sql.tableEntries) {
-        WebsiteEntry entry;
-        entry.id = data.id;
-        entry.website = QString::fromStdString(data.website);
-        entries.append(entry);
-    }
-    entries.removeFirst();
-    refreshList();
-    n = entries.size();
-    entrieLabel->setText("Entries: " + QString::number(n));
-}
-
-void MainMenu::entrieRemoved() {
-    entries.clear();
-    addEntrie();
 }
 
 void MainMenu::searchEntrie(string entrieName) {

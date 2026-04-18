@@ -1,8 +1,9 @@
 #include "sql.h"
-
 #include <iostream>
 #include <cstring>
 #include <cassert>
+#include "decrypt.h"
+#include "encrypt.h"
 
 StaticBypass Sql::staticBypass;
 
@@ -50,7 +51,9 @@ void Sql::createTable(const string &table) {
     }
 }
 
-void Sql::insertData(const string &website, const string &username, const string &password, const string &iv) {
+void Sql::insertData(const string &website, const string &username, const string &password, AES_ctx ctx) {
+    uint8_t iv[16];
+    generateIvFromTime(iv);
     sqlString = "INSERT INTO LOGINS (id,website,username,password,iv) VALUES (0, '0', '0', '0', '0');";
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, callback, nullptr, &error);
@@ -72,7 +75,7 @@ void Sql::insertData(const string &website, const string &username, const string
         id = staticBypass.maxId;
     }
     sqlString = "INSERT INTO LOGINS (id,website,username,password,iv) VALUES (" + to_string(id) + ", '" + website +
-                "', '" + username + "', '" + password + "', '" + iv + "');";
+                "', '" + username + "', '" + encrypt(&password[0], ctx, iv) + "', '" + bytesToHex(iv, 16) + "');";
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, callback, nullptr, &error);
     if(rc != SQLITE_OK) {
@@ -88,22 +91,44 @@ void Sql::insertData(const string &website, const string &username, const string
     }
 }
 
-void Sql::updateData(const string &column, const int &id, const auto &value) {
-    if(column != "website" || column != "username" || column != "password" || column != "iv") {
+void Sql::updateData(const string &column, const int &id, const auto &value, AES_ctx ctx) {
+    if(column != "website" || column != "username" || column != "password") {
         cout << "Error, unknown column: " << column << endl;
         assert(false);
     }
-    sqlString = "UPDATE LOGINS set " + column + " = " + value + " where ID=" + id + "; " \
-    "SELECT * from LOGINS";
-    sql = sqlString.data();
-    rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
-    if( rc != SQLITE_OK ) {
-        fprintf(stderr, "SQL error: %s\n", error);
-        assert(false);
+    if(column != "password") {
+        sqlString = "UPDATE LOGINS set " + column + " = " + value + " where ID=" + id + "; " \
+        "SELECT * from LOGINS";
+        sql = sqlString.data();
+        rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
+        if( rc != SQLITE_OK ) {
+            fprintf(stderr, "SQL error: %s\n", error);
+            assert(false);
+        }
+    }
+    else {
+        uint8_t iv[16];
+        generateIvFromTime(iv);
+        sqlString = "UPDATE LOGINS set password = " + encrypt(&value[0], ctx, iv) + " where ID=" + id + "; " \
+        "SELECT * from LOGINS";
+        sql = sqlString.data();
+        rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
+        if( rc != SQLITE_OK ) {
+            fprintf(stderr, "SQL error: %s\n", error);
+            assert(false);
+        }
+        sqlString = "UPDATE LOGINS set iv = " + bytesToHex(iv, 16) + " where ID=" + to_string(id) + "; " \
+        "SELECT * from LOGINS";
+        sql = sqlString.data();
+        rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
+        if( rc != SQLITE_OK ) {
+            fprintf(stderr, "SQL error: %s\n", error);
+            assert(false);
+        }
     }
 }
 
-void Sql::readData(const int &id) {
+void Sql::readData(const int &id, AES_ctx ctx) {
     sqlString = "SELECT * FROM LOGINS WHERE id=" + to_string(id) + ";";
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, saveEntrieCallback, (void*)data, &error);
@@ -112,6 +137,7 @@ void Sql::readData(const int &id) {
         assert(false);
     }
     websiteData = staticBypass.websiteData;
+    websiteData.password = decrypt(websiteData.password, ctx, hexToBytes(websiteData.iv).data());
 }
 
 void Sql::deleteData(const int &id) {
@@ -167,7 +193,7 @@ int Sql::callback(void *NotUsed, int argc, char **argv, char **azColName) {
     return 0;
 }
 
-int Sql::saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+int Sql::saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColName) {//returns all entries
     int id;
     string website;
     for(int i = 0; i < argc; i++) {
@@ -182,7 +208,7 @@ int Sql::saveEntriesCallback(void *NotUsed, int argc, char **argv, char **azColN
     return 0;
 }
 
-int Sql::saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColName) {
+int Sql::saveEntrieCallback(void *NotUsed, int argc, char **argv, char **azColName) {//returns only searched entries
     int id;
     string website, username, password, iv;
     for(int i = 0; i < argc; i++) {

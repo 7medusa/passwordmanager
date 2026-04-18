@@ -2,6 +2,8 @@
 #include "../defines.h"
 #include <iostream>
 
+#include "../backend/encrypt.h"
+
 using namespace std;
 
 Window::Window() {
@@ -11,11 +13,13 @@ Window::Window() {
     stack = new QStackedWidget();
     login = new Login();
     mainMenu = new MainMenu();
-    entrie = new Entrie();
+    entrie = new Entrie(ctx);
+    addEntrie = new AddEntrie();
 
     stack->addWidget(login);
     stack->addWidget(mainMenu);
     stack->addWidget(entrie);
+    stack->addWidget(addEntrie);
     setCentralWidget(stack);
 
     QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
@@ -26,6 +30,14 @@ Window::Window() {
     stack->setCurrentWidget(login);
     login->show();
 #else
+    masterpasswordString = "hello";//test masterpassword
+    generateIvFromTime(iv);
+    char* masterPassword = new char[masterpasswordString.length() + 1];
+    strcpy(masterPassword, masterpasswordString.c_str());
+    keyFromMasterPassword(masterPassword, key);
+    delete[] masterPassword;
+    AES_init_ctx_iv(&ctx, key, iv);
+
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
 #endif
@@ -33,15 +45,22 @@ Window::Window() {
 
 void Window::loging() {
     mainMenu->addEntrie();
-    masterpassword = login->masterpasswordInput;
+    masterpasswordString = login->masterpasswordInput;
     login->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
+
+    generateIvFromTime(iv);
+    char* masterPassword = new char[masterpasswordString.length() + 1];
+    strcpy(masterPassword, masterpasswordString.c_str());
+    keyFromMasterPassword(masterPassword, key);
+    delete[] masterPassword;
+    AES_init_ctx_iv(&ctx, key, iv);
 }
 
 void Window::entrieClicked(int id) {
     sql.openDb();
-    sql.readData(id);
+    sql.readData(id, ctx);
     sql.closeDb();
     mainMenu->hide();
     entrie->id = id;
@@ -61,3 +80,7 @@ void Window::entrieExited() {
     mainMenu->show();
     mainMenu->search->setText("");
 }
+
+void Window::addEntrieExited() {}
+
+void Window::addEntrieClicked() {}
