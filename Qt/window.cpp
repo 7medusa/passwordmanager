@@ -1,7 +1,6 @@
 #include "window.h"
 #include "../defines.h"
 #include <iostream>
-
 #include "../backend/encrypt.h"
 
 using namespace std;
@@ -14,7 +13,7 @@ Window::Window() {
     login = new Login();
     mainMenu = new MainMenu();
     entrie = new Entrie(ctx);
-    addEntrie = new AddEntrie();
+    addEntrie = new AddEntrie(ctx);
 
     stack->addWidget(login);
     stack->addWidget(mainMenu);
@@ -24,7 +23,10 @@ Window::Window() {
 
     QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
     QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {entrieClicked(id);});
+    QObject::connect(mainMenu, &MainMenu::addEntrieClicked, this, &Window::addEntrieClicked);
     QObject::connect(entrie, &Entrie::exited, this, &Window::entrieExited);
+    QObject::connect(addEntrie, &AddEntrie::addEntrieExited, this, &Window::addEntrieExited);
+
 
 #ifndef DEBUG
     stack->setCurrentWidget(login);
@@ -74,13 +76,22 @@ void Window::entrieClicked(int id) {
 }
 
 void Window::entrieExited() {
-    mainMenu->entrieRemoved();
+    mainMenu->entrieUpdate();
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
     mainMenu->search->setText("");
 }
 
-void Window::addEntrieExited() {}
+void Window::addEntrieExited() {
+    mainMenu->entrieUpdate();
+    addEntrie->hide();
+    stack->setCurrentWidget(mainMenu);
+    mainMenu->show();
+}
 
-void Window::addEntrieClicked() {}
+void Window::addEntrieClicked() {
+    mainMenu->hide();
+    stack->setCurrentWidget(addEntrie);
+    addEntrie->show();
+}

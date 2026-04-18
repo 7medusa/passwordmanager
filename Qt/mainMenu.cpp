@@ -21,6 +21,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     list->setWidget(listItem);
 
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
+    QObject::connect(addButton, &QPushButton::clicked, this, [this](){emit addEntrieClicked();});
     QObject::connect(search, &QLineEdit::textEdited, this, [this]() {searchEntrie(search->text().toStdString());});
 
     auto layoutH1 = new QHBoxLayout();
@@ -68,7 +69,7 @@ void MainMenu::addEntrie() {
     entrieLabel->setText("Entries: " + QString::number(n));
 }
 
-void MainMenu::entrieRemoved() {
+void MainMenu::entrieUpdate() {
     entries.clear();
     addEntrie();
 }

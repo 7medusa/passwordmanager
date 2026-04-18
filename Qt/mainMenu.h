@@ -16,10 +16,11 @@ class MainMenu : public QWidget {
 public:
     explicit MainMenu(QWidget *parent = nullptr);
     void addEntrie();
-    void entrieRemoved();
+    void entrieUpdate();
     QLineEdit *search;
     signals:
     void entrieClicked(int id);
+    void addEntrieClicked();
 private:
     void refreshList();
     void searchEntrie(string entrieName);

@@ -31,13 +31,16 @@ private:
 class AddEntrie : public QWidget {
     Q_OBJECT
 public:
-    explicit AddEntrie(QWidget *parent = nullptr);
+    explicit AddEntrie(AES_ctx &ctx, QWidget *parent = nullptr);
+    signals:
+    void addEntrieExited();
 private:
-    void encryptPassword();
-    Sql sql;
-    QPushButton *addButton, *exitButton;
-    QLineEdit *websiteLine, *usernameLine, *passwordLine;
+    void saveEntrie();
+    QPushButton *exitButton, *addButton;
     QLabel *websiteLabel, *usernameLabel, *passwordLabel;
+    QLineEdit *websiteLine, *usernameLine, *passwordLine;
+    Sql sql;
+    AES_ctx& ctx;
 };
 
 #endif
