@@ -4,6 +4,7 @@
 #include <cassert>
 #include "decrypt.h"
 #include "encrypt.h"
+#include "../defines.h"
 
 StaticBypass Sql::staticBypass;
 
@@ -23,7 +24,7 @@ Sql::~Sql() = default;
 void Sql::openDb() {
     rc = sqlite3_open(dbPath.c_str(), &db);
     if(rc != SQLITE_OK) {
-        cout << "Error opening database: " << rc << endl;
+        cerr << "Error opening database: " << rc << endl;
         assert(false);
     }
     createTable("data");
@@ -40,13 +41,13 @@ void Sql::createTable(const string &table) {
     else if(table == "settings")
         sqlString = "CREATE TABLE IF NOT EXISTS SETTINGS (id INTEGER PRIMARY KEY AUTOINCREMENT, setting TEXT, value INT);";
     else {
-        cout << "Error, unknown table: " << table << endl;
+        cerr << "Error, unknown table: " << table << endl;
         assert(false);
     }
     sql = sqlString.data();
     rc = sqlite3_exec(db, sql, callback, nullptr, &error);
     if(rc != SQLITE_OK) {
-        cout << "SQL error: " << error << endl;
+        cerr << "SQL error: " << error << endl;
         assert(false);
     }
 }
@@ -85,7 +86,7 @@ void Sql::insertData(const string &website, const string &username, const string
             sqlite3_free(error);
         }
         else {
-            cout << "SQL error: " << error << endl;
+            cerr << "SQL error: " << error << endl;
             assert(false);
         }
     }
@@ -93,7 +94,7 @@ void Sql::insertData(const string &website, const string &username, const string
 
 void Sql::updateData(const string &column, const int &id, const auto &value, AES_ctx ctx) {
     if(column != "website" || column != "username" || column != "password") {
-        cout << "Error, unknown column: " << column << endl;
+        cerr << "Error, unknown column: " << column << endl;
         assert(false);
     }
     if(column != "password") {

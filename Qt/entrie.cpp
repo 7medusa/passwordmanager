@@ -24,7 +24,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
 
     QObject::connect(closeButton, &QPushButton::clicked, this, &Entrie::exited);
     QObject::connect(deleteButton, &QPushButton::clicked, this, &Entrie::deleteEntrie);
-    QObject::connect(showPassword, &QPushButton::clicked, this, [this, ctx]() { showPasswordClicked(ctx); });
+    QObject::connect(showPassword, &QPushButton::clicked, this, [this]() { showPasswordClicked(); });
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(saveButton);
@@ -56,7 +56,7 @@ void Entrie::deleteEntrie() {
     emit exited();
 }
 
-void Entrie::showPasswordClicked(AES_ctx ctx) {
+void Entrie::showPasswordClicked() {
     if(passwordShown) {
         passwordLine->setText("********");
         passwordShown = false;
@@ -67,7 +67,7 @@ void Entrie::showPasswordClicked(AES_ctx ctx) {
         sql.readData(id, ctx);
         sql.closeDb();
         passwordLine->setText(QString::fromStdString(sql.websiteData.password));
-        passwordShown = false;
+        passwordShown = true;
     }
 }
 

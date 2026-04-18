@@ -83,8 +83,7 @@ void MainMenu::refreshList() {
     for(const WebsiteEntry &entry : entries) {
         auto *item = new ListItem(entry.id, entry.website);
         listLayout->addWidget(item);
-        connect(item, &ListItem::clicked, this, [this](int id) {
-            emit entrieClicked(id);
+        QObject::connect(item, &ListItem::clicked, this, [this](int id) {emit entrieClicked(id);
 #ifdef DEBUG
             cout << "clicked: " << id << endl;
 #endif

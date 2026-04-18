@@ -17,7 +17,7 @@ public:
 private:
     void updateEntrie();
     void deleteEntrie();
-    void showPasswordClicked(AES_ctx ctx);
+    void showPasswordClicked();
     void encryptPassword();
     void decryptPassword();
     bool passwordShown;
