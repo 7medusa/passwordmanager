@@ -9,23 +9,20 @@ class Entrie : public QWidget {
 public:
     explicit Entrie(AES_ctx &ctx, QWidget *parent = nullptr);
     int id;
+    bool passwordShown;
+    Sql sql;
     string website, username;
     QLabel *idText;
-    QLineEdit *websiteLine, *usernameLine;
+    QLineEdit *websiteLine, *usernameLine, *passwordLine;
     signals:
     void exited();
 private:
     void updateEntrie();
     void deleteEntrie();
     void showPasswordClicked();
-    void encryptPassword();
-    void decryptPassword();
-    bool passwordShown;
     AES_ctx& ctx;
-    QPushButton *closeButton, *saveButton, *showPassword, *deleteButton;
+    QPushButton *closeButton, *saveButton, *showPassword, *deleteButton, *copyButton;
     QLabel *saveText;
-    QLineEdit *passwordLine;
-    Sql sql;
 };
 
 class AddEntrie : public QWidget {

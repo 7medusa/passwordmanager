@@ -76,6 +76,13 @@ void Window::entrieClicked(int id) {
 }
 
 void Window::entrieExited() {
+    entrie->sql.websiteData.id = 0;
+    entrie->sql.websiteData.website = "";
+    entrie->sql.websiteData.username = "";
+    entrie->sql.websiteData.password = "";
+    entrie->sql.websiteData.iv = "";
+    entrie->passwordLine->setText("********");
+    entrie->passwordShown = false;
     mainMenu->entrieUpdate();
     entrie->hide();
     stack->setCurrentWidget(mainMenu);

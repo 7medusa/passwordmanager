@@ -37,7 +37,7 @@ public:
     void closeDb();
     void createTable(const string &table);
     void insertData(const string &website, const string &username, const string &password, AES_ctx ctx);
-    void updateData(const string &column, const int &id, const auto &value, AES_ctx ctx);
+    void updateData(const string &column, const int &id, const string &value, AES_ctx ctx);
     void readData(const int &id, AES_ctx ctx);
     void deleteData(const int &id);
     void readTable();

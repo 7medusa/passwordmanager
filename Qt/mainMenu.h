@@ -25,7 +25,7 @@ private:
     void refreshList();
     void searchEntrie(string entrieName);
     int n;
-    QPushButton *exitButton, *addButton, *clearFilterButton;
+    QPushButton *exitButton, *addButton, *clearFilterButton, *settingsButton;
     QLabel *searchLabel, *entrieLabel;
     QScrollArea *list;
     QWidget *listItem;

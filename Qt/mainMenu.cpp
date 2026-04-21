@@ -8,6 +8,7 @@ using namespace std;
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
     addButton = new QPushButton("Add", this);
+    settingsButton = new QPushButton("⚙️", this);
     searchLabel = new QLabel("search:", this);
     entrieLabel = new QLabel("Entries: " + QString::number(-1), this);
     search = new QLineEdit(this);
@@ -17,6 +18,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
 
     exitButton->setAutoDefault(true);
     addButton->setAutoDefault(true);
+    settingsButton->setAutoDefault(true);
     list->setWidgetResizable(true);
     list->setWidget(listItem);
 
@@ -27,6 +29,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
     layoutH1->addWidget(addButton);
+    layoutH1->addWidget(settingsButton);
 
     auto layoutH2 = new QHBoxLayout();
     layoutH2->addWidget(searchLabel);layoutH2->addWidget(search);

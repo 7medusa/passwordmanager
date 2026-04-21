@@ -92,13 +92,13 @@ void Sql::insertData(const string &website, const string &username, const string
     }
 }
 
-void Sql::updateData(const string &column, const int &id, const auto &value, AES_ctx ctx) {
-    if(column != "website" || column != "username" || column != "password") {
+void Sql::updateData(const string &column, const int &id, const string &value, AES_ctx ctx) {
+    if(column != "website" && column != "username" && column != "password") {
         cerr << "Error, unknown column: " << column << endl;
         assert(false);
     }
     if(column != "password") {
-        sqlString = "UPDATE LOGINS set " + column + " = " + value + " where ID=" + id + "; " \
+        sqlString = "UPDATE LOGINS set " + column + "='" + value + "' where ID=" + to_string(id) + "; " \
         "SELECT * from LOGINS";
         sql = sqlString.data();
         rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
@@ -110,7 +110,7 @@ void Sql::updateData(const string &column, const int &id, const auto &value, AES
     else {
         uint8_t iv[16];
         generateIvFromTime(iv);
-        sqlString = "UPDATE LOGINS set password = " + encrypt(&value[0], ctx, iv) + " where ID=" + id + "; " \
+        sqlString = "UPDATE LOGINS set password='" + encrypt(&value[0], ctx, iv) + "' where ID=" + to_string(id) + "; " \
         "SELECT * from LOGINS";
         sql = sqlString.data();
         rc = sqlite3_exec(db, sql, callback, (void*)data, &error);
@@ -118,7 +118,7 @@ void Sql::updateData(const string &column, const int &id, const auto &value, AES
             fprintf(stderr, "SQL error: %s\n", error);
             assert(false);
         }
-        sqlString = "UPDATE LOGINS set iv = " + bytesToHex(iv, 16) + " where ID=" + to_string(id) + "; " \
+        sqlString = "UPDATE LOGINS set iv='" + bytesToHex(iv, 16) + "' where ID=" + to_string(id) + "; " \
         "SELECT * from LOGINS";
         sql = sqlString.data();
         rc = sqlite3_exec(db, sql, callback, (void*)data, &error);

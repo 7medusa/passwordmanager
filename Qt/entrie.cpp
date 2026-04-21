@@ -8,6 +8,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     passwordShown = false;
 
     closeButton = new QPushButton("Close", this);
+    copyButton = new QPushButton("Copy", this);
     saveButton = new QPushButton("Save", this);
     showPassword = new QPushButton("Show password", this);
     deleteButton = new QPushButton("Delete", this);
@@ -24,7 +25,9 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
 
     QObject::connect(closeButton, &QPushButton::clicked, this, &Entrie::exited);
     QObject::connect(deleteButton, &QPushButton::clicked, this, &Entrie::deleteEntrie);
-    QObject::connect(showPassword, &QPushButton::clicked, this, [this]() { showPasswordClicked(); });
+    QObject::connect(showPassword, &QPushButton::clicked, this, &Entrie::showPasswordClicked);
+    QObject::connect(copyButton, &QPushButton::clicked, this, [this]() {QApplication::clipboard()->setText(QString::fromStdString(sql.websiteData.password));});
+    QObject::connect(saveButton, &QPushButton::clicked, this, &Entrie::updateEntrie);
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(saveButton);
@@ -34,6 +37,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     auto layoutH2 = new QHBoxLayout();
     layoutH2->addWidget(passwordLine);
     layoutH2->addWidget(showPassword);
+    layoutH2->addWidget(copyButton);
 
     auto layout = new QVBoxLayout(this);
     layout->addLayout(layoutH1);
@@ -47,7 +51,18 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     setLayout(layout);
 }
 
-void Entrie::updateEntrie() {}
+void Entrie::updateEntrie() {
+    sql.openDb();
+    if(websiteLine->text().toStdString() !=sql.websiteData.website)
+        sql.updateData("website", id, websiteLine->text().toStdString(), ctx);
+    if(usernameLine->text().toStdString() !=sql.websiteData.username)
+        sql.updateData("username", id, usernameLine->text().toStdString(), ctx);
+    if(passwordLine->text().toStdString() != "********") {
+        if(passwordLine->text().toStdString() !=sql.websiteData.password)
+            sql.updateData("password", id, passwordLine->text().toStdString(), ctx);
+    }
+    sql.closeDb();
+}
 
 void Entrie::deleteEntrie() {
     sql.openDb();
@@ -70,10 +85,6 @@ void Entrie::showPasswordClicked() {
         passwordShown = true;
     }
 }
-
-void Entrie::encryptPassword() {}
-
-void Entrie::decryptPassword() {}
 
 AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     exitButton = new QPushButton("exit without save", this);
