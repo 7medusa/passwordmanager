@@ -25,6 +25,7 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
     QObject::connect(addButton, &QPushButton::clicked, this, [this](){emit addEntrieClicked();});
     QObject::connect(search, &QLineEdit::textEdited, this, [this]() {searchEntrie(search->text().toStdString());});
+    QObject::connect(settingsButton, &QPushButton::clicked, this, [this]() {emit settingsClicked();});
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
@@ -117,7 +118,7 @@ void MainMenu::searchEntrie(string entrieName) {
     entrieLabel->setText("Entries: " + QString::number(n));
 }
 
-ListItem::ListItem(int id, const QString &text, QWidget *parent) : QWidget(parent), entryId(id) {  // ID speichern
+ListItem::ListItem(int id, const QString &text, QWidget *parent) : QWidget(parent), entryId(id) {
     QLabel *label = new QLabel(text, this);
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(label);

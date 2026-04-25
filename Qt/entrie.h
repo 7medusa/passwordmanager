@@ -8,6 +8,7 @@ class Entrie : public QWidget {
     Q_OBJECT
 public:
     explicit Entrie(AES_ctx &ctx, QWidget *parent = nullptr);
+    void clear();
     int id;
     bool passwordShown;
     Sql sql;
@@ -29,6 +30,7 @@ class AddEntrie : public QWidget {
     Q_OBJECT
 public:
     explicit AddEntrie(AES_ctx &ctx, QWidget *parent = nullptr);
+    void clear();
     signals:
     void addEntrieExited();
 private:

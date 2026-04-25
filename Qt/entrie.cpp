@@ -51,6 +51,19 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     setLayout(layout);
 }
 
+void Entrie::clear() {
+    id = 0;
+    websiteLine->setText("");
+    usernameLine->setText("");
+    passwordLine->setText("********");
+    sql.websiteData.id = 0;
+    sql.websiteData.website = "";
+    sql.websiteData.username = "";
+    sql.websiteData.password = "";
+    sql.websiteData.iv = "";
+    passwordShown = false;
+}
+
 void Entrie::updateEntrie() {
     sql.openDb();
     if(websiteLine->text().toStdString() !=sql.websiteData.website)
@@ -125,6 +138,12 @@ AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) 
     layout->addLayout(layoutH4);
     layout->setAlignment(Qt::AlignCenter);
     setLayout(layout);
+}
+
+void AddEntrie::clear() {
+    websiteLine->setText("");
+    usernameLine->setText("");
+    passwordLine->setText("");
 }
 
 void AddEntrie::saveEntrie() {

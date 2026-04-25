@@ -12,6 +12,7 @@ Window::Window() {
     stack = new QStackedWidget();
     login = new Login();
     mainMenu = new MainMenu();
+    settings = new Settings();
     entrie = new Entrie(ctx);
     addEntrie = new AddEntrie(ctx);
 
@@ -19,13 +20,17 @@ Window::Window() {
     stack->addWidget(mainMenu);
     stack->addWidget(entrie);
     stack->addWidget(addEntrie);
+    stack->addWidget(settings);
     setCentralWidget(stack);
 
     QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
     QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {entrieClicked(id);});
     QObject::connect(mainMenu, &MainMenu::addEntrieClicked, this, &Window::addEntrieClicked);
+    QObject::connect(mainMenu, &MainMenu::settingsClicked, this, &Window::settingsClicked);
+    QObject::connect(settings, &Settings::settingsExited, this, &Window::settingsExited);
     QObject::connect(entrie, &Entrie::exited, this, &Window::entrieExited);
     QObject::connect(addEntrie, &AddEntrie::addEntrieExited, this, &Window::addEntrieExited);
+
 
 
 #ifndef DEBUG
@@ -39,6 +44,12 @@ Window::Window() {
     keyFromMasterPassword(masterPassword, key);
     delete[] masterPassword;
     AES_init_ctx_iv(&ctx, key, iv);
+
+    settings->loadSettings();
+    if(settings->dark)
+        settings->darkMode();
+    else
+        settings->lightMode();
 
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
@@ -64,6 +75,7 @@ void Window::entrieClicked(int id) {
     sql.openDb();
     sql.readData(id, ctx);
     sql.closeDb();
+
     mainMenu->hide();
     entrie->id = id;
     entrie->website = sql.websiteData.website;
@@ -76,13 +88,7 @@ void Window::entrieClicked(int id) {
 }
 
 void Window::entrieExited() {
-    entrie->sql.websiteData.id = 0;
-    entrie->sql.websiteData.website = "";
-    entrie->sql.websiteData.username = "";
-    entrie->sql.websiteData.password = "";
-    entrie->sql.websiteData.iv = "";
-    entrie->passwordLine->setText("********");
-    entrie->passwordShown = false;
+    entrie->clear();
     mainMenu->entrieUpdate();
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
@@ -91,6 +97,7 @@ void Window::entrieExited() {
 }
 
 void Window::addEntrieExited() {
+    addEntrie->clear();
     mainMenu->entrieUpdate();
     addEntrie->hide();
     stack->setCurrentWidget(mainMenu);
@@ -101,4 +108,16 @@ void Window::addEntrieClicked() {
     mainMenu->hide();
     stack->setCurrentWidget(addEntrie);
     addEntrie->show();
+}
+
+void Window::settingsClicked() {
+    mainMenu->hide();
+    stack->setCurrentWidget(settings);
+    settings->show();
+}
+
+void Window::settingsExited() {
+    settings->hide();
+    stack->setCurrentWidget(mainMenu);
+    mainMenu->show();
 }

@@ -5,6 +5,7 @@
 #include "login.h"
 #include "mainMenu.h"
 #include "entrie.h"
+#include "settings.h"
 #include "../backend/sql.h"
 
 class Window : public QMainWindow {
@@ -17,7 +18,10 @@ private:
     void entrieExited();
     void addEntrieExited();
     void addEntrieClicked();
+    void settingsClicked();
+    void settingsExited();
     QStackedWidget *stack;
+    Settings *settings;
     Login *login;
     MainMenu *mainMenu;
     Entrie *entrie;

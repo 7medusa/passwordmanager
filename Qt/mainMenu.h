@@ -21,6 +21,7 @@ public:
     signals:
     void entrieClicked(int id);
     void addEntrieClicked();
+    void settingsClicked();
 private:
     void refreshList();
     void searchEntrie(string entrieName);
