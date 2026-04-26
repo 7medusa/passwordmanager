@@ -15,8 +15,10 @@ Window::Window() {
     settings = new Settings();
     entrie = new Entrie(ctx);
     addEntrie = new AddEntrie(ctx);
+    passwordgenerator = new Passwordgenerator();
 
     stack->addWidget(login);
+    stack->addWidget(passwordgenerator);
     stack->addWidget(mainMenu);
     stack->addWidget(entrie);
     stack->addWidget(addEntrie);
@@ -30,6 +32,8 @@ Window::Window() {
     QObject::connect(settings, &Settings::settingsExited, this, &Window::settingsExited);
     QObject::connect(entrie, &Entrie::exited, this, &Window::entrieExited);
     QObject::connect(addEntrie, &AddEntrie::addEntrieExited, this, &Window::addEntrieExited);
+    QObject::connect(mainMenu, &MainMenu::passwordgeneratorClicked, this, &Window::passwordgeneratorClicked);
+    QObject::connect(passwordgenerator, &Passwordgenerator::passwordgeneratorExited, this, &Window::passwordgeneratorExited);
 
 
 
@@ -93,7 +97,7 @@ void Window::entrieExited() {
     entrie->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
-    mainMenu->search->setText("");
+    mainMenu->searchLine->setText("");
 }
 
 void Window::addEntrieExited() {
@@ -118,6 +122,18 @@ void Window::settingsClicked() {
 
 void Window::settingsExited() {
     settings->hide();
+    stack->setCurrentWidget(mainMenu);
+    mainMenu->show();
+}
+
+void Window::passwordgeneratorClicked() {
+    mainMenu->hide();
+    stack->setCurrentWidget(passwordgenerator);
+    passwordgenerator->show();
+}
+
+void Window::passwordgeneratorExited() {
+    passwordgenerator->hide();
     stack->setCurrentWidget(mainMenu);
     mainMenu->show();
 }

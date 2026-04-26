@@ -17,8 +17,9 @@ public:
     explicit MainMenu(QWidget *parent = nullptr);
     void addEntrie();
     void entrieUpdate();
-    QLineEdit *search;
+    QLineEdit *searchLine;
     signals:
+    void passwordgeneratorClicked();
     void entrieClicked(int id);
     void addEntrieClicked();
     void settingsClicked();
@@ -26,7 +27,7 @@ private:
     void refreshList();
     void searchEntrie(string entrieName);
     int n;
-    QPushButton *exitButton, *addButton, *clearFilterButton, *settingsButton;
+    QPushButton *exitButton, *addButton, *clearFilterButton, *settingsButton, *passwordgeneratorButton;
     QLabel *searchLabel, *entrieLabel;
     QScrollArea *list;
     QWidget *listItem;

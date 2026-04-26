@@ -5,6 +5,7 @@
 #include "login.h"
 #include "mainMenu.h"
 #include "entrie.h"
+#include "passwordgenerator.h"
 #include "settings.h"
 #include "../backend/sql.h"
 
@@ -20,8 +21,11 @@ private:
     void addEntrieClicked();
     void settingsClicked();
     void settingsExited();
+    void passwordgeneratorClicked();
+    void passwordgeneratorExited();
     QStackedWidget *stack;
     Settings *settings;
+    Passwordgenerator *passwordgenerator;
     Login *login;
     MainMenu *mainMenu;
     Entrie *entrie;

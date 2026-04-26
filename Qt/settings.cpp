@@ -5,20 +5,18 @@ Settings::Settings(QWidget *parent) : QWidget(parent) {
     dark = false;
 
     exitButton = new QPushButton("Exit", this);
-    saveButton = new QPushButton("Save", this);
     changeMasterpassword = new QPushButton("Change masterpassword", this);
     if(dark)
         darkModeButton = new QPushButton("Darkmode", this);
     else
         darkModeButton = new QPushButton("Lightmode", this);
-    darkModeLabel = new QLabel("Darkmode: ", this);
+    darkModeLabel = new QLabel("Color: ", this);
 
     QObject::connect(exitButton, &QPushButton::clicked, this, [this]() {emit settingsExited();});
     QObject::connect(darkModeButton, &QPushButton::clicked, this, &Settings::toogleDarkMode);
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
-    //layoutH1->addWidget(saveButton);
 
     auto layoutH2 = new QHBoxLayout();
     layoutH2->addWidget(darkModeLabel);

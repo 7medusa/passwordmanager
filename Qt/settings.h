@@ -20,7 +20,7 @@ private:
     QJsonObject settings;
     QString settingsPath;
     QPalette palette;
-    QPushButton *exitButton, *saveButton, *darkModeButton, *changeMasterpassword;
+    QPushButton *exitButton, *darkModeButton, *changeMasterpassword;
     QLabel *darkModeLabel;
     Sql sql;
 };

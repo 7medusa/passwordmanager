@@ -9,9 +9,10 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
     addButton = new QPushButton("Add", this);
     settingsButton = new QPushButton("⚙️", this);
+    passwordgeneratorButton = new QPushButton("Passwordgenerator", this);
     searchLabel = new QLabel("search:", this);
     entrieLabel = new QLabel("Entries: " + QString::number(-1), this);
-    search = new QLineEdit(this);
+    searchLine = new QLineEdit(this);
     list = new QScrollArea(this);
     listItem = new QWidget(this);
     listLayout = new QVBoxLayout(listItem);
@@ -19,21 +20,24 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
     exitButton->setAutoDefault(true);
     addButton->setAutoDefault(true);
     settingsButton->setAutoDefault(true);
+    passwordgeneratorButton->setAutoDefault(true);
     list->setWidgetResizable(true);
     list->setWidget(listItem);
 
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
     QObject::connect(addButton, &QPushButton::clicked, this, [this](){emit addEntrieClicked();});
-    QObject::connect(search, &QLineEdit::textEdited, this, [this]() {searchEntrie(search->text().toStdString());});
+    QObject::connect(searchLine, &QLineEdit::textEdited, this, [this]() {searchEntrie(searchLine->text().toStdString());});
     QObject::connect(settingsButton, &QPushButton::clicked, this, [this]() {emit settingsClicked();});
+    QObject::connect(passwordgeneratorButton, &QPushButton::clicked, this, [this]() {emit passwordgeneratorClicked();});
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
     layoutH1->addWidget(addButton);
+    layoutH1->addWidget(passwordgeneratorButton);
     layoutH1->addWidget(settingsButton);
 
     auto layoutH2 = new QHBoxLayout();
-    layoutH2->addWidget(searchLabel);layoutH2->addWidget(search);
+    layoutH2->addWidget(searchLabel);layoutH2->addWidget(searchLine);
 
     auto layoutV1 = new QVBoxLayout();
     layoutV1->addWidget(entrieLabel);
