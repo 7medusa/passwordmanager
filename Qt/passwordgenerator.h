@@ -18,7 +18,7 @@ private:
     QCheckBox *uppercase, *lowercase, *numbers, *symbols;
     QString password;
     QSlider *lengthSlider;
-    bool uppercaseChecked, lowercaseChecked, numbersChecked, symbolsChecked;
+    bool uppercaseChecked, numbersChecked, symbolsChecked;
 };
 
 #endif

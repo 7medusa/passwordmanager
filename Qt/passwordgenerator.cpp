@@ -1,11 +1,13 @@
 #include "passwordgenerator.h"
+#include <string>
+
+using namespace std;
 
 Passwordgenerator::Passwordgenerator(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
     generateButton = new QPushButton("Generate", this);
     lengthSlider = new QSlider(Qt::Horizontal, this);
     uppercase = new QCheckBox("Uppercase", this);
-    lowercase = new QCheckBox("Lowercase", this);
     numbers = new QCheckBox("Numbers", this);
     symbols = new QCheckBox("Symbols", this);
     passwordLine = new QLineEdit(this);
@@ -21,6 +23,7 @@ Passwordgenerator::Passwordgenerator(QWidget *parent) : QWidget(parent) {
     QObject::connect(exitButton, &QPushButton::clicked, this, [this]() {emit passwordgeneratorExited();});
     QObject::connect(lengthSlider, &QSlider::valueChanged, this, &Passwordgenerator::updateLengthLine);
     QObject::connect(lengthLine, &QLineEdit::textEdited, this, &Passwordgenerator::updateLengthSlider);
+    QObject::connect(generateButton, &QPushButton::clicked, this, &Passwordgenerator::generatePassword);
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
@@ -35,7 +38,6 @@ Passwordgenerator::Passwordgenerator(QWidget *parent) : QWidget(parent) {
 
     auto layoutH4 = new QHBoxLayout();
     layoutH4->addWidget(uppercase);
-    layoutH4->addWidget(lowercase);
     layoutH4->addWidget(numbers);
     layoutH4->addWidget(symbols);
 
@@ -56,4 +58,34 @@ void Passwordgenerator::updateLengthSlider() {
 
 void Passwordgenerator::updateLengthLine() {
     lengthLine->setText(QString::number(lengthSlider->value()));
+}
+
+void Passwordgenerator::generatePassword() {
+    size_t length = lengthSlider->value();
+    const string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+    const string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const string numberChars    = "0123456789";
+    const string symbolChars    = "!@#$%^&*()-_=+[]{}<>?/";
+    string charset = lowercaseChars;
+    if(uppercase->isChecked())
+        charset += uppercaseChars;
+    if(numbers->isChecked())
+        charset += numberChars;
+    if(symbols->isChecked())
+        charset += symbolChars;
+    if(charset.empty())
+        return;
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<std::size_t> dist(0, charset.size() - 1);
+
+    string password;
+    password.reserve(length);
+
+    for(size_t i = 0; i < length; ++i) {
+        password += charset[dist(gen)];
+    }
+
+    passwordLine->setText(QString::fromStdString(password));
 }
