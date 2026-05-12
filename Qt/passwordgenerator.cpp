@@ -64,8 +64,8 @@ void Passwordgenerator::generatePassword() {
     size_t length = lengthSlider->value();
     const string lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
     const string uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const string numberChars    = "0123456789";
-    const string symbolChars    = "!@#$%^&*()-_=+[]{}<>?/";
+    const string numberChars = "0123456789";
+    const string symbolChars = "!@#$%^&*()-_=+[]{}<>?/";
     string charset = lowercaseChars;
     if(uppercase->isChecked())
         charset += uppercaseChars;
