@@ -13,8 +13,9 @@ private:
     void updateLengthSlider();
     void updateLengthLine();
     void generatePassword();
+    void copyPassword();
     QLineEdit *passwordLine, *lengthLine;
-    QPushButton *exitButton, *generateButton;
+    QPushButton *exitButton, *generateButton, *copyButton;
     QCheckBox *uppercase, *lowercase, *numbers, *symbols;
     QString password;
     QSlider *lengthSlider;

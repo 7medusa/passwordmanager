@@ -8,6 +8,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     passwordShown = false;
 
     closeButton = new QPushButton("Close", this);
+    insertButton = new QPushButton("Insert", this);
     copyButton = new QPushButton("Copy", this);
     saveButton = new QPushButton("Save", this);
     showPassword = new QPushButton("Show password", this);
@@ -28,6 +29,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     QObject::connect(showPassword, &QPushButton::clicked, this, &Entrie::showPasswordClicked);
     QObject::connect(copyButton, &QPushButton::clicked, this, [this]() {QApplication::clipboard()->setText(QString::fromStdString(sql.websiteData.password));});
     QObject::connect(saveButton, &QPushButton::clicked, this, &Entrie::updateEntrie);
+    QObject::connect(insertButton, &QPushButton::clicked, this, &Entrie::insertPassword);
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(saveButton);
@@ -38,6 +40,7 @@ Entrie::Entrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     layoutH2->addWidget(passwordLine);
     layoutH2->addWidget(showPassword);
     layoutH2->addWidget(copyButton);
+    layoutH2->addWidget(insertButton);
 
     auto layout = new QVBoxLayout(this);
     layout->addLayout(layoutH1);
@@ -99,9 +102,17 @@ void Entrie::showPasswordClicked() {
     }
 }
 
+void Entrie::insertPassword() {
+    passwordShown = true;
+    passwordLine->setText(QApplication::clipboard()->text());
+}
+
 AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) {
     exitButton = new QPushButton("exit without save", this);
     addButton = new QPushButton("save", this);
+    insertWebsiteButton = new QPushButton("insert", this);
+    insertUsernameButton = new QPushButton("insert", this);
+    insertPasswordButton = new QPushButton("insert", this);
     websiteLabel = new QLabel("Website:", this);
     usernameLabel = new QLabel("Username:", this);
     passwordLabel = new QLabel("Password:", this);
@@ -114,6 +125,9 @@ AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) 
 
     QObject::connect(exitButton, &QPushButton::clicked, this, [this](){emit addEntrieExited();});
     QObject::connect(addButton, &QPushButton::clicked, this, &AddEntrie::saveEntrie);
+    QObject::connect(insertWebsiteButton, &QPushButton::clicked, this, [this](){websiteLine->setText(QApplication::clipboard()->text());});
+    QObject::connect(insertUsernameButton, &QPushButton::clicked, this, [this](){usernameLine->setText(QApplication::clipboard()->text());});
+    QObject::connect(insertPasswordButton, &QPushButton::clicked, this, [this](){passwordLine->setText(QApplication::clipboard()->text());});
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
@@ -122,14 +136,17 @@ AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) 
     auto layoutH2 = new QHBoxLayout();
     layoutH2->addWidget(websiteLabel);
     layoutH2->addWidget(websiteLine);
+    layoutH2->addWidget(insertWebsiteButton);
 
     auto layoutH3 = new QHBoxLayout();
     layoutH3->addWidget(usernameLabel);
     layoutH3->addWidget(usernameLine);
+    layoutH3->addWidget(insertUsernameButton);
 
     auto layoutH4 = new QHBoxLayout();
     layoutH4->addWidget(passwordLabel);
     layoutH4->addWidget(passwordLine);
+    layoutH4->addWidget(insertPasswordButton);
 
     auto layout = new QVBoxLayout();
     layout->addLayout(layoutH1);

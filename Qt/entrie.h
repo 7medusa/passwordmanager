@@ -21,8 +21,9 @@ private:
     void updateEntrie();
     void deleteEntrie();
     void showPasswordClicked();
+    void insertPassword();
     AES_ctx& ctx;
-    QPushButton *closeButton, *saveButton, *showPassword, *deleteButton, *copyButton;
+    QPushButton *closeButton, *saveButton, *showPassword, *deleteButton, *copyButton, *insertButton;
     QLabel *saveText;
 };
 
@@ -35,7 +36,10 @@ public:
     void addEntrieExited();
 private:
     void saveEntrie();
-    QPushButton *exitButton, *addButton;
+    void insertWebsite();
+    void insertUsername();
+    void insertPassword();
+    QPushButton *exitButton, *addButton, *insertWebsiteButton, *insertUsernameButton, *insertPasswordButton;
     QLabel *websiteLabel, *usernameLabel, *passwordLabel;
     QLineEdit *websiteLine, *usernameLine, *passwordLine;
     Sql sql;

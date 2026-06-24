@@ -6,6 +6,7 @@ using namespace std;
 Passwordgenerator::Passwordgenerator(QWidget *parent) : QWidget(parent) {
     exitButton = new QPushButton("Exit", this);
     generateButton = new QPushButton("Generate", this);
+    copyButton = new QPushButton("Copy", this);
     lengthSlider = new QSlider(Qt::Horizontal, this);
     uppercase = new QCheckBox("Uppercase", this);
     numbers = new QCheckBox("Numbers", this);
@@ -24,9 +25,12 @@ Passwordgenerator::Passwordgenerator(QWidget *parent) : QWidget(parent) {
     QObject::connect(lengthSlider, &QSlider::valueChanged, this, &Passwordgenerator::updateLengthLine);
     QObject::connect(lengthLine, &QLineEdit::textEdited, this, &Passwordgenerator::updateLengthSlider);
     QObject::connect(generateButton, &QPushButton::clicked, this, &Passwordgenerator::generatePassword);
+    QObject::connect(copyButton, &QPushButton::clicked, this, &Passwordgenerator::copyPassword);
+
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);
+    layoutH1->addWidget(copyButton);
     layoutH1->addWidget(generateButton);
 
     auto layoutH2 = new QHBoxLayout();
@@ -88,4 +92,9 @@ void Passwordgenerator::generatePassword() {
     }
 
     passwordLine->setText(QString::fromStdString(password));
+}
+
+void Passwordgenerator::copyPassword() {
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(passwordLine->text());
 }
