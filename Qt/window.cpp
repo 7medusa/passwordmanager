@@ -42,6 +42,10 @@ Window::Window() {
 
 #ifndef DEBUG
     settings->loadSettings();
+    if(settings->dark)
+        settings->darkMode();
+    else
+        settings->lightMode();
     if(settings->firstLogin == true) {
         stack->setCurrentWidget(firstLogin);
         firstLogin->show();
