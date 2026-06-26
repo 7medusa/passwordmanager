@@ -128,6 +128,9 @@ AddEntrie::AddEntrie(AES_ctx &ctx, QWidget *parent) : QWidget(parent), ctx(ctx) 
     QObject::connect(insertWebsiteButton, &QPushButton::clicked, this, [this](){websiteLine->setText(QApplication::clipboard()->text());});
     QObject::connect(insertUsernameButton, &QPushButton::clicked, this, [this](){usernameLine->setText(QApplication::clipboard()->text());});
     QObject::connect(insertPasswordButton, &QPushButton::clicked, this, [this](){passwordLine->setText(QApplication::clipboard()->text());});
+    QObject::connect(websiteLine, &QLineEdit::returnPressed, this, [this]() {usernameLine->setFocus();});
+    QObject::connect(usernameLine, &QLineEdit::returnPressed, this, [this]() {passwordLine->setFocus();});
+    QObject::connect(passwordLine, &QLineEdit::returnPressed, this, &AddEntrie::saveEntrie);
 
     auto layoutH1 = new QHBoxLayout();
     layoutH1->addWidget(exitButton);

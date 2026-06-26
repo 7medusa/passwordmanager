@@ -13,7 +13,7 @@ public:
 private:
     void passwordCheck();
     QLabel *labelText, *falsePasswordText;
-    QPushButton *submitButton, *exitButton, *settingsButton;
+    QPushButton *submitButton, *exitButton;
     QLineEdit *passwordInput;
     signals:
     void passwordCorrect();

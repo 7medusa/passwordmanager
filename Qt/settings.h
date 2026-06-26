@@ -12,6 +12,7 @@ public:
     void darkMode();
     void lightMode();
     bool dark;
+    bool firstLogin;
     signals:
     void settingsExited();
 private:

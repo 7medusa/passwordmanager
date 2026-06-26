@@ -3,9 +3,10 @@
 
 Settings::Settings(QWidget *parent) : QWidget(parent) {
     dark = false;
+    firstLogin = true;
 
     exitButton = new QPushButton("Exit", this);
-    changeMasterpassword = new QPushButton("Change masterpassword", this);
+    changeMasterpassword = new QPushButton("Change masterpassword(not working)", this);
     if(dark)
         darkModeButton = new QPushButton("Darkmode", this);
     else
@@ -59,6 +60,12 @@ void Settings::loadSettings() {
     else {
         dark = false;
         darkModeButton->setText("Lightmode");
+    }
+    if(settings["firstLogin"].toString() == "false") {
+        firstLogin = false;
+    }
+    else if(settings["firstLogin"].toString() == "true") {
+        firstLogin = true;
     }
 }
 

@@ -1,6 +1,6 @@
 #ifndef PASSWORDMANAGER_DEFINES_H
 #define PASSWORDMANAGER_DEFINES_H
 
-#define DEBUG
+//#define DEBUG
 
 #endif

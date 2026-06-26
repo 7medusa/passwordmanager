@@ -8,6 +8,7 @@
 #include "passwordgenerator.h"
 #include "settings.h"
 #include "../backend/sql.h"
+#include "firstLogin.h"
 
 class Window : public QMainWindow {
     Q_OBJECT
@@ -30,6 +31,7 @@ private:
     MainMenu *mainMenu;
     Entrie *entrie;
     AddEntrie *addEntrie;
+    FirstLogin *firstLogin;
     ListItem *listItem;
     string masterpasswordString;
     Sql sql;

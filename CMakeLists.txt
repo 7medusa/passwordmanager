@@ -19,6 +19,8 @@ add_executable(passwordmanager
         Qt/entrie.cpp
         Qt/settings.h
         Qt/settings.cpp
+        Qt/firstLogin.h
+        Qt/firstLogin.cpp
         Qt/passwordgenerator.h
         Qt/passwordgenerator.cpp
         backend/masterpassword.h

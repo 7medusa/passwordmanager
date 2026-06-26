@@ -10,6 +10,7 @@ Window::Window() {
     setWindowTitle("Passwordmanager");
 
     stack = new QStackedWidget();
+    firstLogin = new FirstLogin();
     login = new Login();
     mainMenu = new MainMenu();
     settings = new Settings();
@@ -17,6 +18,7 @@ Window::Window() {
     addEntrie = new AddEntrie(ctx);
     passwordgenerator = new Passwordgenerator();
 
+    stack->addWidget(firstLogin);
     stack->addWidget(login);
     stack->addWidget(passwordgenerator);
     stack->addWidget(mainMenu);
@@ -25,6 +27,7 @@ Window::Window() {
     stack->addWidget(settings);
     setCentralWidget(stack);
 
+    QObject::connect(firstLogin, &FirstLogin::firstLoginExited, this, [this]() {stack->setCurrentWidget(login);login->show();});
     QObject::connect(login, &Login::passwordCorrect, this, &Window::loging);
     QObject::connect(mainMenu, &MainMenu::entrieClicked, this,  [this](int id) {entrieClicked(id);});
     QObject::connect(mainMenu, &MainMenu::addEntrieClicked, this, &Window::addEntrieClicked);
@@ -38,8 +41,15 @@ Window::Window() {
 
 
 #ifndef DEBUG
-    stack->setCurrentWidget(login);
-    login->show();
+    settings->loadSettings();
+    if(settings->firstLogin == true) {
+        stack->setCurrentWidget(firstLogin);
+        firstLogin->show();
+    }
+    else {
+        stack->setCurrentWidget(login);
+        login->show();
+    }
 #else
     masterpasswordString = "hello";//test masterpassword
     generateIvFromTime(iv);
@@ -49,7 +59,6 @@ Window::Window() {
     delete[] masterPassword;
     AES_init_ctx_iv(&ctx, key, iv);
 
-    settings->loadSettings();
     if(settings->dark)
         settings->darkMode();
     else

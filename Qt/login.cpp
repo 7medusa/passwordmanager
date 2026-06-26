@@ -12,11 +12,9 @@ Login::Login(QWidget *parent) : QWidget(parent)  {
     submitButton = new QPushButton("Submit", this);
     exitButton = new QPushButton("Exit", this);
     passwordInput = new QLineEdit(this);
-    settingsButton = new QPushButton("⚙️", this);
 
     submitButton->setAutoDefault(true);
     exitButton->setAutoDefault(true);
-    settingsButton->setAutoDefault(true);
 
     QObject::connect(submitButton, &QPushButton::clicked, this, &Login::passwordCheck);
     QObject::connect(exitButton, &QPushButton::clicked, this, &QApplication::quit);
@@ -34,7 +32,6 @@ Login::Login(QWidget *parent) : QWidget(parent)  {
     layoutH2->addWidget(passwordInput);
     layoutH2->addWidget(submitButton);
     layoutH2->addWidget(exitButton);
-    layoutH2->addWidget(settingsButton);
     layoutH2->addSpacerItem(new QSpacerItem(400, 200, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
     auto layout = new QVBoxLayout(this);
