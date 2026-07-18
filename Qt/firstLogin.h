@@ -14,7 +14,6 @@ public:
     void firstLoginExited();
 private:
     void comparePasswords();
-    void writePassword(string password);
     QLineEdit *passwordInputOne, *passwordInputTwo;
     QPushButton *submitButton, *exitButton;
     QLabel *errorText, *passwordInputOneText, *passwordInputTwoText;

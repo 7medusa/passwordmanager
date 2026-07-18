@@ -42,14 +42,19 @@ void FirstLogin::comparePasswords() {
     string secondPassword = passwordInputTwo->text().toStdString();
 
     if(firstPassword == secondPassword) {
-        writePassword(firstPassword);
-
-        QJsonObject settings;
-        settings[QString::fromStdString("firstLogin")] = QString::fromStdString("false");
-        QJsonDocument doc(settings);
         QFile settingsFile("settings.json");
-        if(settingsFile.open(QIODevice::WriteOnly)) {
-            settingsFile.write(doc.toJson());
+        QJsonObject settings;
+        if(settingsFile.open(QIODevice::ReadOnly)) {
+            QJsonDocument loadDoc = QJsonDocument::fromJson(settingsFile.readAll());
+            settingsFile.close();
+            if (loadDoc.isObject())
+                settings = loadDoc.object();
+        }
+        settings["firstLogin"] = false;
+        QJsonDocument saveDoc(settings);
+        if(settingsFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+            settingsFile.write(saveDoc.toJson());
+            settingsFile.flush();
             settingsFile.close();
         }
 
@@ -66,5 +71,3 @@ void FirstLogin::comparePasswords() {
         errorText->setText(QString::fromStdString("Passwords do not match"));
     }
 }
-
-void FirstLogin::writePassword(string password) {}

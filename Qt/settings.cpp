@@ -34,38 +34,56 @@ Settings::Settings(QWidget *parent) : QWidget(parent) {
     setLayout(layout);
 }
 
-void Settings::saveSettings(string dataType, string data) {
-    settings[QString::fromStdString(dataType)] = QString::fromStdString(data);
+void Settings::saveSettings(string dataType, bool data) {
+    QSaveFile settingsFile("settings.json");
+    QJsonObject settings;
+
+    {
+        QFile readFile("settings.json");
+        if (readFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QJsonDocument loadDoc = QJsonDocument::fromJson(readFile.readAll());
+            readFile.close();
+            if (loadDoc.isObject())
+                settings = loadDoc.object();
+        }
+    }
+
+    settings[QString::fromStdString(dataType)] = QJsonValue::fromVariant(data);
+
     QJsonDocument doc(settings);
-    QFile settingsFile("settings.json");
-    if(settingsFile.open(QIODevice::WriteOnly)) {
-        settingsFile.write(doc.toJson());
-        settingsFile.close();
+
+    if (settingsFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        settingsFile.write(doc.toJson(QJsonDocument::Indented));
+        settingsFile.commit();
     }
 }
 
 void Settings::loadSettings() {
     QFile settingsFile("settings.json");
+    QJsonObject settings;
+    QJsonDocument doc(settings);
+
     if(settingsFile.open(QIODevice::ReadOnly)) {
-        QJsonDocument doc = QJsonDocument::fromJson(settingsFile.readAll());
-        if (!doc.isNull()) {
-            settings = doc.object();
-        }
+        QJsonDocument loadDoc = QJsonDocument::fromJson(settingsFile.readAll());
         settingsFile.close();
+        if(loadDoc.isObject())
+            settings = loadDoc.object();
     }
-    if(settings["theme"].toString() == "dark") {
-        dark = true;
+
+    firstLogin = settings.value("firstLogin").toBool();
+    dark = settings.value("dark").toBool();
+    if(dark) {
         darkModeButton->setText("Darkmode");
+        darkMode();
     }
     else {
-        dark = false;
         darkModeButton->setText("Lightmode");
+        lightMode();
     }
-    if(settings["firstLogin"].toString() == "false") {
-        firstLogin = false;
-    }
-    else if(settings["firstLogin"].toString() == "true") {
-        firstLogin = true;
+    QJsonDocument saveDoc(settings);
+    if(settingsFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        settingsFile.write(saveDoc.toJson());
+        settingsFile.close();
     }
 }
 
@@ -80,9 +98,9 @@ void Settings::toogleDarkMode() {
     }
     dark = !dark;
     if(dark)
-        saveSettings("theme", "dark");
+        saveSettings("dark", true);
     else
-        saveSettings("theme", "light");
+        saveSettings("dark", false);
 }
 
 void Settings::darkMode() {

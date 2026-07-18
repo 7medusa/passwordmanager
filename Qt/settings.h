@@ -16,7 +16,7 @@ public:
     signals:
     void settingsExited();
 private:
-    void saveSettings(string dataType, string data);
+    void saveSettings(string dataType, bool data);
     void toogleDarkMode();
     QJsonObject settings;
     QString settingsPath;
